@@ -3,3 +3,13 @@ numpy
 pillow
 pymupdf
 tqdm
+# --- Core Inference Engine (PyTorch) ---
+torch
+torchvision
+
+# --- Hugging Face Integration ---
+transformers
+safetensors
+
+# --- OCR Toolkit ---
+paddleocr
