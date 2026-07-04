@@ -1,0 +1,118 @@
+{
+  "pdf": "data_input\\input.pdf",
+  "dpi": 400,
+  "num_pages_requested": 10,
+  "num_pages_processed": 10,
+  "pages": [
+    {
+      "page": 1,
+      "raw_image": "data_output\\pages_raw\\page_001.png",
+      "clean_image": "data_output\\pages_clean\\page_001_clean.png",
+      "status": "processed",
+      "skipped": false,
+      "crop_applied": true,
+      "deskew_applied": false,
+      "deskew_angle": 0.0,
+      "error": null
+    },
+    {
+      "page": 2,
+      "raw_image": "data_output\\pages_raw\\page_002.png",
+      "clean_image": "data_output\\pages_clean\\page_002_clean.png",
+      "status": "processed",
+      "skipped": false,
+      "crop_applied": true,
+      "deskew_applied": true,
+      "deskew_angle": 0.1066,
+      "error": null
+    },
+    {
+      "page": 3,
+      "raw_image": "data_output\\pages_raw\\page_003.png",
+      "clean_image": "data_output\\pages_clean\\page_003_clean.png",
+      "status": "processed",
+      "skipped": false,
+      "crop_applied": true,
+      "deskew_applied": true,
+      "deskew_angle": 0.0,
+      "error": null
+    },
+    {
+      "page": 4,
+      "raw_image": "data_output\\pages_raw\\page_004.png",
+      "clean_image": "data_output\\pages_clean\\page_004_clean.png",
+      "status": "processed",
+      "skipped": false,
+      "crop_applied": true,
+      "deskew_applied": true,
+      "deskew_angle": -0.2174,
+      "error": null
+    },
+    {
+      "page": 5,
+      "raw_image": "data_output\\pages_raw\\page_005.png",
+      "clean_image": "data_output\\pages_clean\\page_005_clean.png",
+      "status": "processed",
+      "skipped": false,
+      "crop_applied": true,
+      "deskew_applied": true,
+      "deskew_angle": 0.0,
+      "error": null
+    },
+    {
+      "page": 6,
+      "raw_image": "data_output\\pages_raw\\page_006.png",
+      "clean_image": "data_output\\pages_clean\\page_006_clean.png",
+      "status": "processed",
+      "skipped": false,
+      "crop_applied": true,
+      "deskew_applied": true,
+      "deskew_angle": 0.3517,
+      "error": null
+    },
+    {
+      "page": 7,
+      "raw_image": "data_output\\pages_raw\\page_007.png",
+      "clean_image": "data_output\\pages_clean\\page_007_clean.png",
+      "status": "processed",
+      "skipped": false,
+      "crop_applied": true,
+      "deskew_applied": true,
+      "deskew_angle": 0.0,
+      "error": null
+    },
+    {
+      "page": 8,
+      "raw_image": "data_output\\pages_raw\\page_008.png",
+      "clean_image": "data_output\\pages_clean\\page_008_clean.png",
+      "status": "processed",
+      "skipped": false,
+      "crop_applied": true,
+      "deskew_applied": true,
+      "deskew_angle": 0.3425,
+      "error": null
+    },
+    {
+      "page": 9,
+      "raw_image": "data_output\\pages_raw\\page_009.png",
+      "clean_image": "data_output\\pages_clean\\page_009_clean.png",
+      "status": "processed",
+      "skipped": false,
+      "crop_applied": true,
+      "deskew_applied": false,
+      "deskew_angle": 2.9073,
+      "error": null
+    },
+    {
+      "page": 10,
+      "raw_image": "data_output\\pages_raw\\page_010.png",
+      "clean_image": "data_output\\pages_clean\\page_010_clean.png",
+      "status": "processed",
+      "skipped": false,
+      "crop_applied": true,
+      "deskew_applied": false,
+      "deskew_angle": -0.1372,
+      "error": null
+    }
+  ]
+}
