@@ -1,0 +1,696 @@
+{
+  "total_images": 10,
+  "ok": 10,
+  "failed": 0,
+  "items": [
+    {
+      "image_path": "/home/ngvihoa/Desktop/python-proj/nlp-chinese-document-ocr/data_output/pages_clean/page_001_clean.png",
+      "raw_result_path": "/home/ngvihoa/Desktop/python-proj/nlp-chinese-document-ocr/data_output/ocr-output/raw/page_001_clean/page_001_clean_res.json",
+      "text_path": "/home/ngvihoa/Desktop/python-proj/nlp-chinese-document-ocr/data_output/ocr-output/texts/page_001_clean.txt",
+      "status": "ok",
+      "error": null,
+      "line_count": 0,
+      "text": "",
+      "lines": []
+    },
+    {
+      "image_path": "/home/ngvihoa/Desktop/python-proj/nlp-chinese-document-ocr/data_output/pages_clean/page_002_clean.png",
+      "raw_result_path": "/home/ngvihoa/Desktop/python-proj/nlp-chinese-document-ocr/data_output/ocr-output/raw/page_002_clean/page_002_clean_res.json",
+      "text_path": "/home/ngvihoa/Desktop/python-proj/nlp-chinese-document-ocr/data_output/ocr-output/texts/page_002_clean.txt",
+      "status": "ok",
+      "error": null,
+      "line_count": 14,
+      "text": "域外漢文小說大系\n越\n孫遜鄭克孟\n南\n漢\n陳益源\n陳慶浩\n后孫遜\n文\n主編\n總主編\n集\n上海古籍出版社\n成",
+      "lines": [
+        {
+          "text": "域外漢文小說大系",
+          "score": 0.9996411800384521
+        },
+        {
+          "text": "越",
+          "score": 0.999089241027832
+        },
+        {
+          "text": "孫遜鄭克孟",
+          "score": 0.9982641339302063
+        },
+        {
+          "text": "南",
+          "score": 0.8264535665512085
+        },
+        {
+          "text": "漢",
+          "score": 0.9986459612846375
+        },
+        {
+          "text": "陳益源",
+          "score": 0.9982666969299316
+        },
+        {
+          "text": "陳慶浩",
+          "score": 0.9998373985290527
+        },
+        {
+          "text": "后孫遜",
+          "score": 0.8374123573303223
+        },
+        {
+          "text": "文",
+          "score": 0.9950243830680847
+        },
+        {
+          "text": "主編",
+          "score": 0.9017041921615601
+        },
+        {
+          "text": "總主編",
+          "score": 0.9747284054756165
+        },
+        {
+          "text": "集",
+          "score": 0.9999281167984009
+        },
+        {
+          "text": "上海古籍出版社",
+          "score": 0.9990195035934448
+        },
+        {
+          "text": "成",
+          "score": 0.9994860887527466
+        }
+      ]
+    },
+    {
+      "image_path": "/home/ngvihoa/Desktop/python-proj/nlp-chinese-document-ocr/data_output/pages_clean/page_003_clean.png",
+      "raw_result_path": "/home/ngvihoa/Desktop/python-proj/nlp-chinese-document-ocr/data_output/ocr-output/raw/page_003_clean/page_003_clean_res.json",
+      "text_path": "/home/ngvihoa/Desktop/python-proj/nlp-chinese-document-ocr/data_output/ocr-output/texts/page_003_clean.txt",
+      "status": "ok",
+      "error": null,
+      "line_count": 22,
+      "text": "越\n南漢文小說集\nO\n成\n十一字無序無目39個故事含續類\n测定」。\n石室陳世法式之編輯賜戊戌得進士前茂林郎京北道監察御史洪川澤塢武瓊晏溫校正寧山喬富好禮\nMs.b.29以下略舉路版本狀沉\n院編號爲VHv.486\nA.1300A.1516(《》)A.1752A.2107A.2914VHv.1266VHv.1473\nA.33本二卷72葉頁面尺寸爲26.5×14.5公分有武瓊序有目錄收22個故事卷一下署\n《嶺南摭怪四種總提要\nVHv.1473本三卷目錄中分卷之一卷之二卷之三和續類正文中卻無卷之二卷之三字\nA.2107本三卷武瓊序段永福跋154葉頁面尺寸爲25×16公分每半葉七行行二十一至二\n嶺南摭怪今知存有不下十三本其中十本現藏於漢喃研究院編號爲A.33A.750A.1200\n越陳義中胡華\n嶺南撫怪四種總提要\n一本藏於越南國家圖書館編號爲R6\n撰\n一本藏於法國亞洲學會圖書館編號\n一本藏於史學\n三",
+      "lines": [
+        {
+          "text": "越",
+          "score": 0.9979224801063538
+        },
+        {
+          "text": "南漢文小說集",
+          "score": 0.9924147129058838
+        },
+        {
+          "text": "O",
+          "score": 0.522635281085968
+        },
+        {
+          "text": "成",
+          "score": 0.9943187832832336
+        },
+        {
+          "text": "十一字無序無目39個故事含續類",
+          "score": 0.9349276423454285
+        },
+        {
+          "text": "测定」。",
+          "score": 0.6704061627388
+        },
+        {
+          "text": "石室陳世法式之編輯賜戊戌得進士前茂林郎京北道監察御史洪川澤塢武瓊晏溫校正寧山喬富好禮",
+          "score": 0.9869782328605652
+        },
+        {
+          "text": "Ms.b.29以下略舉路版本狀沉",
+          "score": 0.8242179751396179
+        },
+        {
+          "text": "院編號爲VHv.486",
+          "score": 0.9855987429618835
+        },
+        {
+          "text": "A.1300A.1516(《》)A.1752A.2107A.2914VHv.1266VHv.1473",
+          "score": 0.9909255504608154
+        },
+        {
+          "text": "A.33本二卷72葉頁面尺寸爲26.5×14.5公分有武瓊序有目錄收22個故事卷一下署",
+          "score": 0.9796944260597229
+        },
+        {
+          "text": "《嶺南摭怪四種總提要",
+          "score": 0.9665142297744751
+        },
+        {
+          "text": "VHv.1473本三卷目錄中分卷之一卷之二卷之三和續類正文中卻無卷之二卷之三字",
+          "score": 0.9434530735015869
+        },
+        {
+          "text": "A.2107本三卷武瓊序段永福跋154葉頁面尺寸爲25×16公分每半葉七行行二十一至二",
+          "score": 0.9779726266860962
+        },
+        {
+          "text": "嶺南摭怪今知存有不下十三本其中十本現藏於漢喃研究院編號爲A.33A.750A.1200",
+          "score": 0.9799345135688782
+        },
+        {
+          "text": "越陳義中胡華",
+          "score": 0.5691230893135071
+        },
+        {
+          "text": "嶺南撫怪四種總提要",
+          "score": 0.9469627737998962
+        },
+        {
+          "text": "一本藏於越南國家圖書館編號爲R6",
+          "score": 0.9427456855773926
+        },
+        {
+          "text": "撰",
+          "score": 0.9999711513519287
+        },
+        {
+          "text": "一本藏於法國亞洲學會圖書館編號",
+          "score": 0.9751378893852234
+        },
+        {
+          "text": "一本藏於史學",
+          "score": 0.9978315830230713
+        },
+        {
+          "text": "三",
+          "score": 0.9566435217857361
+        }
+      ]
+    },
+    {
+      "image_path": "/home/ngvihoa/Desktop/python-proj/nlp-chinese-document-ocr/data_output/pages_clean/page_004_clean.png",
+      "raw_result_path": "/home/ngvihoa/Desktop/python-proj/nlp-chinese-document-ocr/data_output/ocr-output/raw/page_004_clean/page_004_clean_res.json",
+      "text_path": "/home/ngvihoa/Desktop/python-proj/nlp-chinese-document-ocr/data_output/ocr-output/texts/page_004_clean.txt",
+      "status": "ok",
+      "error": null,
+      "line_count": 21,
+      "text": "a\nO\n越\n南\n漢\n文\n记記\n集\n成\n可深歎也增附黎朝後事間有約繁改陋第傳下略加淺評可知是書據嶺南摭怪列傳删改而\n怪新史家以怪神爲不經見之事悉皆抹去遂令人群然趨愧儡之俗場而忘卻祖國聖神真面目\n補續補各一\n事不分卷次的領南摭怪列傳的對照本。\nA.1200本三卷題武瓊校正63葉頁面尺寸爲30.4×21公分有目錄\nA.750本1911年阮翰準對河內阮有敬保存的嶺南摭怪列傳與巴黎馬伯樂原藏的包括39個故\nA.1516本題馬麟逸史有武瓊序83葉頁面尺寸爲25×18公分有目錄不分卷序云是\n根據武瓊一的說法後來被收進嶺南摭怪的人名都是李陳之鴻生碩儒而潤飾校訂該作品\n嶺南摭怪列傳乃是古代嶺南地區的民間故事集不待刻之石編之梓而着于民心碑于人口黃\nA.1752本50葉頁面尺寸爲27×15.5公分包括38個故事不分卷\nA.1300本二卷有喬富序首尾殘缺75葉頁面尺寸爲25×145公分有目錄34個故事有增\nD9",
+      "lines": [
+        {
+          "text": "a",
+          "score": 0.5347788333892822
+        },
+        {
+          "text": "O",
+          "score": 0.8830689191818237
+        },
+        {
+          "text": "越",
+          "score": 0.980317234992981
+        },
+        {
+          "text": "南",
+          "score": 0.9999262094497681
+        },
+        {
+          "text": "漢",
+          "score": 0.9942082166671753
+        },
+        {
+          "text": "文",
+          "score": 0.9999408721923828
+        },
+        {
+          "text": "记記",
+          "score": 0.6092652082443237
+        },
+        {
+          "text": "集",
+          "score": 0.9995478987693787
+        },
+        {
+          "text": "成",
+          "score": 0.9995960593223572
+        },
+        {
+          "text": "可深歎也增附黎朝後事間有約繁改陋第傳下略加淺評可知是書據嶺南摭怪列傳删改而",
+          "score": 0.9826278686523438
+        },
+        {
+          "text": "怪新史家以怪神爲不經見之事悉皆抹去遂令人群然趨愧儡之俗場而忘卻祖國聖神真面目",
+          "score": 0.9769005179405212
+        },
+        {
+          "text": "補續補各一",
+          "score": 0.9969126582145691
+        },
+        {
+          "text": "事不分卷次的領南摭怪列傳的對照本。",
+          "score": 0.9435564875602722
+        },
+        {
+          "text": "A.1200本三卷題武瓊校正63葉頁面尺寸爲30.4×21公分有目錄",
+          "score": 0.9801909327507019
+        },
+        {
+          "text": "A.750本1911年阮翰準對河內阮有敬保存的嶺南摭怪列傳與巴黎馬伯樂原藏的包括39個故",
+          "score": 0.9846429228782654
+        },
+        {
+          "text": "A.1516本題馬麟逸史有武瓊序83葉頁面尺寸爲25×18公分有目錄不分卷序云是",
+          "score": 0.9813734292984009
+        },
+        {
+          "text": "根據武瓊一的說法後來被收進嶺南摭怪的人名都是李陳之鴻生碩儒而潤飾校訂該作品",
+          "score": 0.9792946577072144
+        },
+        {
+          "text": "嶺南摭怪列傳乃是古代嶺南地區的民間故事集不待刻之石編之梓而着于民心碑于人口黃",
+          "score": 0.9900084137916565
+        },
+        {
+          "text": "A.1752本50葉頁面尺寸爲27×15.5公分包括38個故事不分卷",
+          "score": 0.9938453435897827
+        },
+        {
+          "text": "A.1300本二卷有喬富序首尾殘缺75葉頁面尺寸爲25×145公分有目錄34個故事有增",
+          "score": 0.9781855940818787
+        },
+        {
+          "text": "D9",
+          "score": 0.5117621421813965
+        }
+      ]
+    },
+    {
+      "image_path": "/home/ngvihoa/Desktop/python-proj/nlp-chinese-document-ocr/data_output/pages_clean/page_005_clean.png",
+      "raw_result_path": "/home/ngvihoa/Desktop/python-proj/nlp-chinese-document-ocr/data_output/ocr-output/raw/page_005_clean/page_005_clean_res.json",
+      "text_path": "/home/ngvihoa/Desktop/python-proj/nlp-chinese-document-ocr/data_output/ocr-output/texts/page_005_clean.txt",
+      "status": "ok",
+      "error": null,
+      "line_count": 17,
+      "text": "越\n南\n漢\n文\n1\n集\n成\n口\n口\n城六日有一我成\n本都以喬富的序附會成武瓊版本的「後序這顯是無稽之舉\n喬富的嶺南摭怪版本A.1300該序言未曾說明喬富的版本分成幾卷現存的若干個嶺南摭怪版\n些故事例如他認爲不能說傘圓山是嫗妃之子董天王是龍君再世李翁仲假裝因腹瀉而致死等等見\n根據序言所謂喬富所撰與武瓊所選的故事篇目雷同但喬富是依據新觀點和新的評論方式重寫了這\n精傳等\n路阮覺海傳魚精傳狐精傳龍眼如月二神傳傘圓山傳南詔傳蠻娘傳蘇瀝傳木\n傳蒸餅傳何烏雷傳董天王傳李翁仲傳一夜澤傳越井傳徐道行阮明空傳楊空",
+      "lines": [
+        {
+          "text": "越",
+          "score": 0.8926948308944702
+        },
+        {
+          "text": "南",
+          "score": 0.9999898672103882
+        },
+        {
+          "text": "漢",
+          "score": 0.6703577041625977
+        },
+        {
+          "text": "文",
+          "score": 0.9995959401130676
+        },
+        {
+          "text": "1",
+          "score": 0.6549457311630249
+        },
+        {
+          "text": "集",
+          "score": 0.9998235106468201
+        },
+        {
+          "text": "成",
+          "score": 0.9996833801269531
+        },
+        {
+          "text": "口",
+          "score": 0.7288917899131775
+        },
+        {
+          "text": "口",
+          "score": 0.963702380657196
+        },
+        {
+          "text": "城六日有一我成",
+          "score": 0.5379728078842163
+        },
+        {
+          "text": "本都以喬富的序附會成武瓊版本的「後序這顯是無稽之舉",
+          "score": 0.988241970539093
+        },
+        {
+          "text": "喬富的嶺南摭怪版本A.1300該序言未曾說明喬富的版本分成幾卷現存的若干個嶺南摭怪版",
+          "score": 0.984099805355072
+        },
+        {
+          "text": "些故事例如他認爲不能說傘圓山是嫗妃之子董天王是龍君再世李翁仲假裝因腹瀉而致死等等見",
+          "score": 0.9923827648162842
+        },
+        {
+          "text": "根據序言所謂喬富所撰與武瓊所選的故事篇目雷同但喬富是依據新觀點和新的評論方式重寫了這",
+          "score": 0.9987137913703918
+        },
+        {
+          "text": "精傳等",
+          "score": 0.9855419993400574
+        },
+        {
+          "text": "路阮覺海傳魚精傳狐精傳龍眼如月二神傳傘圓山傳南詔傳蠻娘傳蘇瀝傳木",
+          "score": 0.982877790927887
+        },
+        {
+          "text": "傳蒸餅傳何烏雷傳董天王傳李翁仲傳一夜澤傳越井傳徐道行阮明空傳楊空",
+          "score": 0.9632664918899536
+        }
+      ]
+    },
+    {
+      "image_path": "/home/ngvihoa/Desktop/python-proj/nlp-chinese-document-ocr/data_output/pages_clean/page_006_clean.png",
+      "raw_result_path": "/home/ngvihoa/Desktop/python-proj/nlp-chinese-document-ocr/data_output/ocr-output/raw/page_006_clean/page_006_clean_res.json",
+      "text_path": "/home/ngvihoa/Desktop/python-proj/nlp-chinese-document-ocr/data_output/ocr-output/texts/page_006_clean.txt",
+      "status": "ok",
+      "error": null,
+      "line_count": 22,
+      "text": "O\n南\n漢\n14\n集\n成\n馬麟逸史今仍兵名。\nVHv.1473及A.1516並行各排以存各本原貌供研究參考因A.33A.2107VHv.1473三本並題\n的理由以及段氏寫的補充部份所依據的資料\n值得注意的地方是全書始於鴻厖傳終於夜叉傳段永福的後跋還說明了編撰成三卷和「續類\n甸幽靈增蒐補遺去繁就簡得傳之本並類入後集以便本家要覽也\n于聖賢之英岳瀆之粹徵貞女之驍雄乾聖娘之靈應及事之關世教者必稽之以趙公史記參之越\n曾對本書的三種異本加以標點排印由陳義等校點刊在越南漢文小說叢刊第二輯\n作《嶺南摭怪列傳不易區分今權在題下依次標示甲本乙本丙本以示區別\n展該書了成爲一本由各代有名或無名的筆者累次收集的民間故事總集\n有士仙塑朔王等傳石龍白鶴諸神殊未續編不能無遺珠之惜也愚咋錄公餘借本抄誦及\n科博學好古釐爲二卷始於鴻龐終於夜叉凡二十二傳爲之序並於卷端可謂奇偉之書矣間\n共三種越南古籍合訂刊於中州古籍出版社題爲嶺南摭怪及史料三種1992年11月臺灣學生書局\n此前本書曾於1991年1月由楊寶筠標點戴可來審校注釋與嘉定通志河仙鎮葉鎮鄭氏家譜\n嶺南摭怪版本複雜存世既久各本之間頗有異文故本次整理徑將A.33本A.2107\n全别具品房务限\n二",
+      "lines": [
+        {
+          "text": "O",
+          "score": 0.7610791325569153
+        },
+        {
+          "text": "南",
+          "score": 0.9999898672103882
+        },
+        {
+          "text": "漢",
+          "score": 0.9991099238395691
+        },
+        {
+          "text": "14",
+          "score": 0.5629024505615234
+        },
+        {
+          "text": "集",
+          "score": 0.9999672174453735
+        },
+        {
+          "text": "成",
+          "score": 0.9999397993087769
+        },
+        {
+          "text": "馬麟逸史今仍兵名。",
+          "score": 0.6397022008895874
+        },
+        {
+          "text": "VHv.1473及A.1516並行各排以存各本原貌供研究參考因A.33A.2107VHv.1473三本並題",
+          "score": 0.9955360293388367
+        },
+        {
+          "text": "的理由以及段氏寫的補充部份所依據的資料",
+          "score": 0.9987626075744629
+        },
+        {
+          "text": "值得注意的地方是全書始於鴻厖傳終於夜叉傳段永福的後跋還說明了編撰成三卷和「續類",
+          "score": 0.9796314835548401
+        },
+        {
+          "text": "甸幽靈增蒐補遺去繁就簡得傳之本並類入後集以便本家要覽也",
+          "score": 0.9893511533737183
+        },
+        {
+          "text": "于聖賢之英岳瀆之粹徵貞女之驍雄乾聖娘之靈應及事之關世教者必稽之以趙公史記參之越",
+          "score": 0.9973562359809875
+        },
+        {
+          "text": "曾對本書的三種異本加以標點排印由陳義等校點刊在越南漢文小說叢刊第二輯",
+          "score": 0.9953256249427795
+        },
+        {
+          "text": "作《嶺南摭怪列傳不易區分今權在題下依次標示甲本乙本丙本以示區別",
+          "score": 0.9690823554992676
+        },
+        {
+          "text": "展該書了成爲一本由各代有名或無名的筆者累次收集的民間故事總集",
+          "score": 0.9967941641807556
+        },
+        {
+          "text": "有士仙塑朔王等傳石龍白鶴諸神殊未續編不能無遺珠之惜也愚咋錄公餘借本抄誦及",
+          "score": 0.9851800203323364
+        },
+        {
+          "text": "科博學好古釐爲二卷始於鴻龐終於夜叉凡二十二傳爲之序並於卷端可謂奇偉之書矣間",
+          "score": 0.9650288224220276
+        },
+        {
+          "text": "共三種越南古籍合訂刊於中州古籍出版社題爲嶺南摭怪及史料三種1992年11月臺灣學生書局",
+          "score": 0.9775240421295166
+        },
+        {
+          "text": "此前本書曾於1991年1月由楊寶筠標點戴可來審校注釋與嘉定通志河仙鎮葉鎮鄭氏家譜",
+          "score": 0.9774519801139832
+        },
+        {
+          "text": "嶺南摭怪版本複雜存世既久各本之間頗有異文故本次整理徑將A.33本A.2107",
+          "score": 0.9859487414360046
+        },
+        {
+          "text": "全别具品房务限",
+          "score": 0.5217960476875305
+        },
+        {
+          "text": "二",
+          "score": 0.5397533774375916
+        }
+      ]
+    },
+    {
+      "image_path": "/home/ngvihoa/Desktop/python-proj/nlp-chinese-document-ocr/data_output/pages_clean/page_007_clean.png",
+      "raw_result_path": "/home/ngvihoa/Desktop/python-proj/nlp-chinese-document-ocr/data_output/ocr-output/raw/page_007_clean/page_007_clean_res.json",
+      "text_path": "/home/ngvihoa/Desktop/python-proj/nlp-chinese-document-ocr/data_output/ocr-output/texts/page_007_clean.txt",
+      "status": "ok",
+      "error": null,
+      "line_count": 31,
+      "text": "口\n越\n南\n藻\n文\nJ\n集\n成\n（1370-1372）中狀元官至翰林學士奉旨兼審刑院使中書令胡朝（1400-1407）執政時他告老還鄉八十歲時去世\n藏書火正掌中品奉御史安暹路轉運使\n業史館總裁除校訂和整理嶺南摭怪外還編撰出越鑑通攷火成算法\n【附註】\n卷第四頁中他說\n咏史詩集所寫的序中他說曾于洪順年間（15091516）在史館見到一本陳世法的嶺南摭怪錄\n三胡宗齋演州土城鄉人居住在塘豪今屬海與省縣無礙鄉生卒年月不詳只知他在陳藝宗紹慶年間\n1452-1516\n八喬富1446字好禮號寧山國威今屬河山平省府臘下村人\n七陈世法\n17261784\n五武方堤(1597-？\n四鄧鳴謙\n二李濟川\n嶺南摭怪四種總提要\n字貞譽號脫軒河靜今義靜省千祿縣人後遷至山西今屬河山平省生卒年月不詳在爲越鑑\n籍貫及生平年月不清楚通過他329年爲粵甸幽靈集所寫的序我們可以知道他在陳朝任守大\n生卒年月不詳只知他的字式之家鄉在石室今屬河山平省\n傳聞嶺南摭怪一書係陳世法作小徵南本亦如是也\n字守樸號澤塢唐安今海興平江縣慕澤鄉人官至工部吏部兵部尚書兼國子監司\n字純甫與武瓊同鄉在公餘捷記中他說武瓊曾與陳世法合編嶺南摭怪集\n字尹厚號桂堂山南下鎮延河鄉今爲太平省延河縣富孝鄉人在見聞小錄第四\n七",
+      "lines": [
+        {
+          "text": "口",
+          "score": 0.5007935166358948
+        },
+        {
+          "text": "越",
+          "score": 0.9993197917938232
+        },
+        {
+          "text": "南",
+          "score": 0.9996206760406494
+        },
+        {
+          "text": "藻",
+          "score": 0.5762326121330261
+        },
+        {
+          "text": "文",
+          "score": 0.9995810389518738
+        },
+        {
+          "text": "J",
+          "score": 0.6359717845916748
+        },
+        {
+          "text": "集",
+          "score": 0.9999583959579468
+        },
+        {
+          "text": "成",
+          "score": 0.9996989965438843
+        },
+        {
+          "text": "（1370-1372）中狀元官至翰林學士奉旨兼審刑院使中書令胡朝（1400-1407）執政時他告老還鄉八十歲時去世",
+          "score": 0.9389862418174744
+        },
+        {
+          "text": "藏書火正掌中品奉御史安暹路轉運使",
+          "score": 0.9779273867607117
+        },
+        {
+          "text": "業史館總裁除校訂和整理嶺南摭怪外還編撰出越鑑通攷火成算法",
+          "score": 0.9848417043685913
+        },
+        {
+          "text": "【附註】",
+          "score": 0.9945023655891418
+        },
+        {
+          "text": "卷第四頁中他說",
+          "score": 0.9975748062133789
+        },
+        {
+          "text": "咏史詩集所寫的序中他說曾于洪順年間（15091516）在史館見到一本陳世法的嶺南摭怪錄",
+          "score": 0.9703927040100098
+        },
+        {
+          "text": "三胡宗齋演州土城鄉人居住在塘豪今屬海與省縣無礙鄉生卒年月不詳只知他在陳藝宗紹慶年間",
+          "score": 0.9753484725952148
+        },
+        {
+          "text": "1452-1516",
+          "score": 0.9625158309936523
+        },
+        {
+          "text": "八喬富1446字好禮號寧山國威今屬河山平省府臘下村人",
+          "score": 0.9789510369300842
+        },
+        {
+          "text": "七陈世法",
+          "score": 0.8333738446235657
+        },
+        {
+          "text": "17261784",
+          "score": 0.9876316785812378
+        },
+        {
+          "text": "五武方堤(1597-？",
+          "score": 0.8485537171363831
+        },
+        {
+          "text": "四鄧鳴謙",
+          "score": 0.661677896976471
+        },
+        {
+          "text": "二李濟川",
+          "score": 0.9521111845970154
+        },
+        {
+          "text": "嶺南摭怪四種總提要",
+          "score": 0.9783647060394287
+        },
+        {
+          "text": "字貞譽號脫軒河靜今義靜省千祿縣人後遷至山西今屬河山平省生卒年月不詳在爲越鑑",
+          "score": 0.9550090432167053
+        },
+        {
+          "text": "籍貫及生平年月不清楚通過他329年爲粵甸幽靈集所寫的序我們可以知道他在陳朝任守大",
+          "score": 0.9869635701179504
+        },
+        {
+          "text": "生卒年月不詳只知他的字式之家鄉在石室今屬河山平省",
+          "score": 0.9963271021842957
+        },
+        {
+          "text": "傳聞嶺南摭怪一書係陳世法作小徵南本亦如是也",
+          "score": 0.9880762696266174
+        },
+        {
+          "text": "字守樸號澤塢唐安今海興平江縣慕澤鄉人官至工部吏部兵部尚書兼國子監司",
+          "score": 0.993394672870636
+        },
+        {
+          "text": "字純甫與武瓊同鄉在公餘捷記中他說武瓊曾與陳世法合編嶺南摭怪集",
+          "score": 0.9964860677719116
+        },
+        {
+          "text": "字尹厚號桂堂山南下鎮延河鄉今爲太平省延河縣富孝鄉人在見聞小錄第四",
+          "score": 0.9799377918243408
+        },
+        {
+          "text": "七",
+          "score": 0.8533457517623901
+        }
+      ]
+    },
+    {
+      "image_path": "/home/ngvihoa/Desktop/python-proj/nlp-chinese-document-ocr/data_output/pages_clean/page_008_clean.png",
+      "raw_result_path": "/home/ngvihoa/Desktop/python-proj/nlp-chinese-document-ocr/data_output/ocr-output/raw/page_008_clean/page_008_clean_res.json",
+      "text_path": "/home/ngvihoa/Desktop/python-proj/nlp-chinese-document-ocr/data_output/ocr-output/texts/page_008_clean.txt",
+      "status": "ok",
+      "error": null,
+      "line_count": 11,
+      "text": "越南漢文小說集成\n录\n嶺南摭怪列傳（丙本）\n嶺南摭怪列傳（乙本）\n嶺南摭怪列傳（甲本）\n馬麟逸史錄\n目錄\n2\n二二五\n一四三\n六七",
+      "lines": [
+        {
+          "text": "越南漢文小說集成",
+          "score": 0.9744312167167664
+        },
+        {
+          "text": "录",
+          "score": 0.9541680812835693
+        },
+        {
+          "text": "嶺南摭怪列傳（丙本）",
+          "score": 0.927804172039032
+        },
+        {
+          "text": "嶺南摭怪列傳（乙本）",
+          "score": 0.9280017018318176
+        },
+        {
+          "text": "嶺南摭怪列傳（甲本）",
+          "score": 0.9221331477165222
+        },
+        {
+          "text": "馬麟逸史錄",
+          "score": 0.9535053372383118
+        },
+        {
+          "text": "目錄",
+          "score": 0.960262656211853
+        },
+        {
+          "text": "2",
+          "score": 0.5089386701583862
+        },
+        {
+          "text": "二二五",
+          "score": 0.9648858904838562
+        },
+        {
+          "text": "一四三",
+          "score": 0.9422200322151184
+        },
+        {
+          "text": "六七",
+          "score": 0.9972701668739319
+        }
+      ]
+    },
+    {
+      "image_path": "/home/ngvihoa/Desktop/python-proj/nlp-chinese-document-ocr/data_output/pages_clean/page_009_clean.png",
+      "raw_result_path": "/home/ngvihoa/Desktop/python-proj/nlp-chinese-document-ocr/data_output/ocr-output/raw/page_009_clean/page_009_clean_res.json",
+      "text_path": "/home/ngvihoa/Desktop/python-proj/nlp-chinese-document-ocr/data_output/ocr-output/texts/page_009_clean.txt",
+      "status": "ok",
+      "error": null,
+      "line_count": 5,
+      "text": "陳世法等\n選\n嶺南\n怪列傳（甲本）\n任明華校點",
+      "lines": [
+        {
+          "text": "陳世法等",
+          "score": 0.9998378753662109
+        },
+        {
+          "text": "選",
+          "score": 0.5058741569519043
+        },
+        {
+          "text": "嶺南",
+          "score": 0.9850232601165771
+        },
+        {
+          "text": "怪列傳（甲本）",
+          "score": 0.9279988408088684
+        },
+        {
+          "text": "任明華校點",
+          "score": 0.9998375773429871
+        }
+      ]
+    },
+    {
+      "image_path": "/home/ngvihoa/Desktop/python-proj/nlp-chinese-document-ocr/data_output/pages_clean/page_010_clean.png",
+      "raw_result_path": "/home/ngvihoa/Desktop/python-proj/nlp-chinese-document-ocr/data_output/ocr-output/raw/page_010_clean/page_010_clean_res.json",
+      "text_path": "/home/ngvihoa/Desktop/python-proj/nlp-chinese-document-ocr/data_output/ocr-output/texts/page_010_clean.txt",
+      "status": "ok",
+      "error": null,
+      "line_count": 2,
+      "text": "正和十八年歲在\n仲冬穀日",
+      "lines": [
+        {
+          "text": "正和十八年歲在",
+          "score": 0.9540116190910339
+        },
+        {
+          "text": "仲冬穀日",
+          "score": 0.9476887583732605
+        }
+      ]
+    }
+  ]
+}

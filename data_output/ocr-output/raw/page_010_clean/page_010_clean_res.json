@@ -1,0 +1,121 @@
+{
+    "input_path": "/home/ngvihoa/Desktop/python-proj/nlp-chinese-document-ocr/data_output/pages_clean/page_010_clean.png",
+    "page_index": null,
+    "model_settings": {
+        "use_doc_preprocessor": false,
+        "use_textline_orientation": true
+    },
+    "dt_polys": [
+        [
+            [
+                1820,
+                1315
+            ],
+            [
+                2182,
+                1314
+            ],
+            [
+                2186,
+                2920
+            ],
+            [
+                1824,
+                2921
+            ]
+        ],
+        [
+            [
+                1828,
+                3187
+            ],
+            [
+                2179,
+                3187
+            ],
+            [
+                2179,
+                4154
+            ],
+            [
+                1828,
+                4154
+            ]
+        ]
+    ],
+    "text_det_params": {
+        "limit_side_len": 64,
+        "limit_type": "min",
+        "thresh": 0.3,
+        "max_side_limit": 4000,
+        "box_thresh": 0.6,
+        "unclip_ratio": 1.5
+    },
+    "text_type": "general",
+    "textline_orientation_angles": [
+        0,
+        0
+    ],
+    "text_rec_score_thresh": 0.0,
+    "return_word_box": false,
+    "rec_texts": [
+        "正和十八年歲在",
+        "仲冬穀日"
+    ],
+    "rec_scores": [
+        0.9540116190910339,
+        0.9476887583732605
+    ],
+    "rec_polys": [
+        [
+            [
+                1820,
+                1315
+            ],
+            [
+                2182,
+                1314
+            ],
+            [
+                2186,
+                2920
+            ],
+            [
+                1824,
+                2921
+            ]
+        ],
+        [
+            [
+                1828,
+                3187
+            ],
+            [
+                2179,
+                3187
+            ],
+            [
+                2179,
+                4154
+            ],
+            [
+                1828,
+                4154
+            ]
+        ]
+    ],
+    "rec_boxes": [
+        [
+            1820,
+            1314,
+            2186,
+            2921
+        ],
+        [
+            1828,
+            3187,
+            2179,
+            4154
+        ]
+    ]
+}
