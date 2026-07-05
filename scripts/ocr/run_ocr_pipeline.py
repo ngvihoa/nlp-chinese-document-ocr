@@ -39,6 +39,7 @@ MODEL_PRESETS = {
 class OcrLine:
     text: str
     score: float | None
+    poly: list[list[float]] | None = None
 
 
 @dataclass(frozen=True)
@@ -108,6 +109,21 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Print commands without running OCR.",
     )
+    parser.add_argument(
+        "--reading-order",
+        choices=("raw", "horizontal", "vertical-rl", "vertical-lr"),
+        default="vertical-rl",
+        help=(
+            "Order recognized text lines. Use vertical-rl for traditional "
+            "Chinese/Han pages. Default: vertical-rl"
+        ),
+    )
+    parser.add_argument(
+        "--vertical-column-tolerance",
+        type=float,
+        default=320.0,
+        help="Max x-center distance, in pixels, to group boxes into one vertical column.",
+    )
     return parser.parse_args()
 
 
@@ -152,21 +168,78 @@ def build_paddleocr_command(args: argparse.Namespace, image_path: Path, raw_dir:
     ]
 
 
-def load_ocr_lines(result_path: Path, min_score: float) -> list[OcrLine]:
+def poly_bounds(poly: list[list[float]] | None) -> tuple[float, float, float, float]:
+    if not poly:
+        return (0.0, 0.0, 0.0, 0.0)
+
+    xs = [float(point[0]) for point in poly]
+    ys = [float(point[1]) for point in poly]
+    return (min(xs), min(ys), max(xs), max(ys))
+
+
+def sort_ocr_lines(
+    lines: list[OcrLine],
+    reading_order: str,
+    vertical_column_tolerance: float,
+) -> list[OcrLine]:
+    if reading_order == "raw":
+        return lines
+
+    def centers(line: OcrLine) -> tuple[float, float, float, float]:
+        left, top, right, bottom = poly_bounds(line.poly)
+        return ((left + right) / 2.0, (top + bottom) / 2.0, right - left, bottom - top)
+
+    if reading_order == "horizontal":
+        return sorted(lines, key=lambda line: (centers(line)[1], centers(line)[0]))
+
+    if reading_order == "vertical-lr":
+        reverse_columns = False
+    else:
+        reverse_columns = True
+
+    sorted_by_x = sorted(lines, key=lambda line: centers(line)[0], reverse=reverse_columns)
+    columns: list[list[OcrLine]] = []
+    column_centers: list[float] = []
+
+    for line in sorted_by_x:
+        x_center = centers(line)[0]
+        for index, column_center in enumerate(column_centers):
+            if abs(x_center - column_center) <= vertical_column_tolerance:
+                columns[index].append(line)
+                column_centers[index] = sum(centers(item)[0] for item in columns[index]) / len(columns[index])
+                break
+        else:
+            columns.append([line])
+            column_centers.append(x_center)
+
+    ordered: list[OcrLine] = []
+    for column in columns:
+        ordered.extend(sorted(column, key=lambda line: centers(line)[1]))
+    return ordered
+
+
+def load_ocr_lines(
+    result_path: Path,
+    min_score: float,
+    reading_order: str,
+    vertical_column_tolerance: float,
+) -> list[OcrLine]:
     with result_path.open("r", encoding="utf-8") as file:
         payload: dict[str, Any] = json.load(file)
 
     texts = payload.get("rec_texts") or []
     scores = payload.get("rec_scores") or []
+    polys = payload.get("rec_polys") or []
     lines: list[OcrLine] = []
 
     for index, text in enumerate(texts):
         score = scores[index] if index < len(scores) else None
         if score is not None and score < min_score:
             continue
-        lines.append(OcrLine(text=str(text), score=score))
+        poly = polys[index] if index < len(polys) else None
+        lines.append(OcrLine(text=str(text), score=score, poly=poly))
 
-    return lines
+    return sort_ocr_lines(lines, reading_order, vertical_column_tolerance)
 
 
 def write_text_file(text_path: Path, lines: list[OcrLine]) -> None:
@@ -186,7 +259,12 @@ def run_one_image(args: argparse.Namespace, image_path: Path, input_dir: Path) -
     text_path = text_dir / f"{image_key}.txt"
 
     if args.skip_existing and result_path.exists():
-        lines = load_ocr_lines(result_path, args.min_score)
+        lines = load_ocr_lines(
+            result_path,
+            args.min_score,
+            args.reading_order,
+            args.vertical_column_tolerance,
+        )
         write_text_file(text_path, lines)
         return ImageResult(image_path, result_path, text_path, lines, "skipped")
 
@@ -219,7 +297,12 @@ def run_one_image(args: argparse.Namespace, image_path: Path, input_dir: Path) -
             error=f"Expected result JSON not found: {result_path}",
         )
 
-    lines = load_ocr_lines(result_path, args.min_score)
+    lines = load_ocr_lines(
+        result_path,
+        args.min_score,
+        args.reading_order,
+        args.vertical_column_tolerance,
+    )
     write_text_file(text_path, lines)
     return ImageResult(image_path, result_path, text_path, lines, "ok")
 
@@ -242,6 +325,7 @@ def write_summary(output_dir: Path, results: list[ImageResult]) -> None:
                     {
                         "text": line.text,
                         "score": line.score,
+                        "poly": line.poly,
                     }
                     for line in result.lines
                 ],
@@ -258,7 +342,6 @@ def write_summary(output_dir: Path, results: list[ImageResult]) -> None:
 
     chunks: list[str] = []
     for result in results:
-        chunks.append(f"===== {result.image_path.name} [{result.status}] =====")
         if result.error:
             chunks.append(result.error)
         else:

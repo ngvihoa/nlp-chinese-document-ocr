@@ -1,6 +1,6 @@
-# OCR Pipeline
+# OCR Step
 
-Folder này chứa script OCR hàng loạt bằng PaddleOCR v6 cho ảnh đã clean.
+Folder này chứa script OCR hàng loạt bằng PaddleOCR v6 cho ảnh đã clean từ bước preprocessing.
 
 ## Cấu trúc mặc định
 
@@ -48,6 +48,30 @@ Model mặc định là `PP-OCRv6_medium_*`. Nếu máy CPU chạy chậm, dùng
 python scripts/ocr/run_ocr_pipeline.py --preset mobile
 ```
 
+## Thứ tự đọc
+
+Mặc định script sắp text theo kiểu Hán văn dọc:
+
+```bash
+python scripts/ocr/run_ocr_pipeline.py --reading-order vertical-rl
+```
+
+Các mode hỗ trợ:
+
+- `vertical-rl`: đọc theo cột từ phải sang trái, trong mỗi cột từ trên xuống.
+- `vertical-lr`: đọc theo cột từ trái sang phải.
+- `horizontal`: đọc theo dòng ngang từ trên xuống.
+- `raw`: giữ nguyên thứ tự PaddleOCR trả về.
+
+Nếu chữ dọc bị đảo thứ tự do các box lệch tâm x, tăng/giảm tolerance gom cột:
+
+```bash
+python scripts/ocr/run_ocr_pipeline.py \
+  --skip-existing \
+  --reading-order vertical-rl \
+  --vertical-column-tolerance 320
+```
+
 ## Output
 
 Sau khi chạy xong, script sinh ra:
@@ -65,6 +89,8 @@ python scripts/ocr/run_ocr_pipeline.py \
   --output-dir ./data_output/ocr-output \
   --preset medium \
   --device cpu \
+  --reading-order vertical-rl \
+  --vertical-column-tolerance 320 \
   --min-score 0.5 \
   --recursive
 ```
