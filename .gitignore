@@ -219,3 +219,8 @@ __marimo__/
 
 data_input/
 docs/
+
+.agents/
+
+# Ignore raw folders
+data_output/
