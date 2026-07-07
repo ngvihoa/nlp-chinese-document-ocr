@@ -1,99 +1,95 @@
-# Han-Nom Scanned PDF Preprocessing
+# nlp-chinese-document-ocr
 
-Repository này hiện chỉ triển khai tiền xử lý ảnh cho PDF scan dạng image-based, và đã hỗ trợ xử lý theo lô nhiều PDF.
+Pipeline OCR tài liệu Hán văn/Chinese document bằng PaddleOCR v6.
 
-## Phạm vi hiện tại
-
-- Quét `data_input/input_*.pdf`
-- Render toàn bộ trang của mỗi PDF bằng `PyMuPDF` nếu không giới hạn
-- Lưu ảnh gốc vào `data_output/XX_raw/`
-- Tiền xử lý bảo toàn nét mảnh Han-Nom
-- Lưu ảnh sạch vào `data_output/XX_clean/`
-- Ghi báo cáo riêng vào `data_output/XX_report.json`
-
-Chưa làm: OCR, segmentation, NER, translation.
-
-## Cấu trúc
+Luồng mặc định:
 
 ```text
-preprocess_first_10_pages.py
-scripts/preprocessing.py
-requirements.txt
-data_input/input_*.pdf
-data_output/
-  01_raw/
-  01_clean/
-  01_report.json
-  02_raw/
-  02_clean/
-  02_report.json
+PDF input
+  -> data_output/pages_raw/
+  -> data_output/pages_clean/
+  -> data_output/ocr-output/
 ```
+
+OCR đang dùng thứ tự đọc mặc định `vertical-rl`: đọc theo cột dọc từ phải sang trái, trong mỗi cột từ trên xuống.
 
 ## Cài đặt
 
-Tạo virtual environment trên Windows PowerShell:
+Linux:
 
-```powershell
-py -m venv .venv
-.\\.venv\\Scripts\\Activate.ps1
-python -m pip install --upgrade pip
+```bash
+python3 -m venv ocr_env
+source ocr_env/bin/activate
+pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-## Chạy batch preprocessing
+Windows PowerShell:
 
 ```powershell
-python preprocess_first_10_pages.py --input_dir data_input --output_dir data_output --dpi 400
+python -m venv ocr_env
+.\ocr_env\Scripts\Activate.ps1
+pip install --upgrade pip
+pip install -r requirements.txt
 ```
 
-Hoặc:
+## Chạy toàn bộ pipeline
 
-```powershell
-python scripts/preprocessing.py --input_dir data_input --output_dir data_output --dpi 400
+Đặt PDF vào `data_input/input.pdf`, rồi chạy:
+
+```bash
+source ocr_env/bin/activate
+python scripts/run_pipeline.py --pdf data_input/input.pdf
 ```
 
-Tùy chọn:
+Lệnh trên sẽ:
 
-- `--force` để ghi đè ảnh đã có
-- `--dpi` để đổi độ phân giải render
-- `--num_pages` để giới hạn số trang đầu mỗi PDF, bỏ qua tùy chọn này thì xử lý hết
+1. Render và clean 10 trang đầu vào `data_output/pages_clean/`.
+2. Chạy PaddleOCR v6 trên các ảnh clean.
+3. Ghi kết quả vào `data_output/ocr-output/`.
 
-## Hành vi xử lý
+## Chạy từng bước
 
-Pipeline:
+Preprocess PDF:
 
-```text
-gray -> safe crop -> safe deskew -> median blur -> CLAHE -> adaptive threshold
+```bash
+python scripts/preprocess_first_10_pages.py \
+  --pdf data_input/input.pdf \
+  --out_dir data_output \
+  --dpi 400 \
+  --num_pages 10
 ```
 
-Nguyên tắc:
+OCR ảnh đã clean:
 
-- mặc định render toàn bộ trang của mỗi PDF
-- không giữ toàn bộ PDF trong memory
-- PDF được xử lý theo thứ tự số trong tên file, ví dụ `input_2.pdf` trước `input_10.pdf`
-- deskew chỉ áp dụng khi góc nằm trong `[-5, 5]`
-- crop và deskew thất bại thì bỏ qua, không làm crash pipeline
-- mặc định resume nếu file output đã tồn tại
-- nếu một PDF lỗi, batch vẫn tiếp tục các PDF còn lại
+```bash
+python scripts/ocr/run_ocr_pipeline.py \
+  --input-dir data_output/pages_clean \
+  --output-dir data_output/ocr-output \
+  --preset medium \
+  --device cpu \
+  --reading-order vertical-rl \
+  --vertical-column-tolerance 320
+```
 
-## Đầu ra báo cáo
+Nếu chỉ muốn sắp xếp lại text từ JSON OCR đã có, không chạy OCR lại:
 
-Mỗi PDF tạo một report riêng:
+```bash
+python scripts/ocr/run_ocr_pipeline.py --skip-existing
+```
 
-- `data_output/01_report.json`
-- `data_output/02_report.json`
-- ...
+## Output
 
-Mỗi report chứa:
+- `data_output/pages_raw/`: ảnh render từ PDF.
+- `data_output/pages_clean/`: ảnh đã preprocess để OCR.
+- `data_output/preprocessing_report.json`: report bước preprocess.
+- `data_output/ocr-output/raw/`: JSON và ảnh annotate gốc từ PaddleOCR.
+- `data_output/ocr-output/texts/`: text OCR từng trang.
+- `data_output/ocr-output/ocr_texts.txt`: toàn bộ text OCR đã gom chung.
+- `data_output/ocr-output/ocr_summary.json`: summary JSON gồm text, score, polygon và trạng thái từng trang.
 
-- đường dẫn PDF
-- DPI
-- số trang yêu cầu
-- số trang đã xử lý
-- trạng thái từng trang
-- thông tin crop / deskew / lỗi
+## Ghi chú
 
-## Giới hạn
-
-- Chưa có OCR
-- Với PDF scan chất lượng thấp, có thể cần tinh chỉnh tham số threshold hoặc crop
+- `fitz` là module import của package `pymupdf`, package đúng trong `requirements.txt` là `pymupdf`.
+- Nếu CPU yếu, dùng `--preset mobile` để chạy nhanh hơn.
+- Nếu muốn giữ nguyên thứ tự PaddleOCR trả về, dùng `--reading-order raw`.
