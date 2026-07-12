@@ -13,3 +13,10 @@ safetensors
 
 # --- OCR Toolkit ---
 paddleocr
+
+# --- Google Drive OAuth Integration ---
+google-api-python-client
+google-auth-httplib2
+google-auth-oauthlib
+protobuf>=5.29.6,<7
+python-dotenv

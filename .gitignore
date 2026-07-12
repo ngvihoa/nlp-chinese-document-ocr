@@ -224,3 +224,4 @@ docs/
 
 # Ignore raw folders
 data_output/
+secrets/
