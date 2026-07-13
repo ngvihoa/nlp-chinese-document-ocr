@@ -21,10 +21,11 @@ from dotenv import load_dotenv
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(PROJECT_ROOT))
+SCRIPT_DIR = Path(__file__).resolve().parent
+sys.path.insert(0, str(SCRIPT_DIR))
 load_dotenv(PROJECT_ROOT / ".env")
 
-from scripts.ocr.run_ocr_pipeline import (  # noqa: E402
+from ocr_core import (  # noqa: E402
     IMAGE_EXTENSIONS,
     MODEL_PRESETS,
     find_images,
