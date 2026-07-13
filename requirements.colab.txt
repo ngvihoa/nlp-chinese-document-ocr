@@ -1,13 +1,11 @@
 opencv-python
-numpy
+numpy>=1.24,<2.4
 pillow
 pymupdf
 tqdm
-transformers
-safetensors
 paddleocr
 google-api-python-client
 google-auth-httplib2
 google-auth-oauthlib
-protobuf>=5.29.6,<7
+protobuf>=5.29.6,<6
 python-dotenv

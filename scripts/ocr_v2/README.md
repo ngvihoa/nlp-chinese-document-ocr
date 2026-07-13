@@ -131,11 +131,17 @@ Colab hoặc mở file trực tiếp từ GitHub, sau đó:
 Trên Colab pipeline dùng `--use-colab-auth`, không cần upload OAuth client JSON hay
 token cá nhân lên runtime.
 
-Notebook dùng `requirements.colab.txt` và gỡ PyTorch khỏi runtime vì PyTorch CUDA
-12.8 và PaddlePaddle CUDA 12.6 yêu cầu các phiên bản thư viện NVIDIA khác nhau.
-Pipeline OCR hiện tại không sử dụng PyTorch. Nếu đã chạy cell cài đặt cũ và gặp
-dependency conflict, chọn **Runtime > Restart session**, pull code mới và chạy lại
-các cell từ đầu.
+Notebook tạo virtualenv riêng tại `/content/ocr_env` để PaddlePaddle CUDA 12.6
+không xung đột với PyTorch CUDA 12.8 và các package cài sẵn của Colab. Nếu đã chạy
+cell cài đặt cũ và gặp dependency conflict, chọn **Runtime > Restart session**,
+pull code mới và chạy lại các cell từ đầu.
+
+Notebook dùng package `virtualenv` thay cho `python -m venv` vì một số Colab image
+không cung cấp `ensurepip` cho Python hệ thống.
+
+Các lệnh Colab dùng `--engine paddle_static`, không dùng `transformers`. Engine
+`transformers` yêu cầu PyTorch/Torchvision, trong khi `paddle_static` chạy trực tiếp
+trên PaddlePaddle GPU và tránh xung đột CUDA với PyTorch có sẵn của Colab.
 
 ## Giữ dữ liệu local
 
