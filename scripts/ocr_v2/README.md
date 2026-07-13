@@ -117,6 +117,26 @@ python scripts/ocr_v2/run_ocr_pipeline.py \
 
 Không cần `--recursive`: pipeline luôn duyệt đệ quy ảnh bên trong mỗi folder sách.
 
+## Chạy trên Google Colab GPU
+
+Notebook có sẵn tại `scripts/ocr_v2/colab_ocr_pipeline.ipynb`. Upload notebook lên
+Colab hoặc mở file trực tiếp từ GitHub, sau đó:
+
+1. Chọn **Runtime > Change runtime type > T4 GPU**.
+2. Chạy lần lượt các cell để clone repository và cài PaddlePaddle GPU.
+3. Đăng nhập Google bằng cell `authenticate_user()`.
+4. Điền folder ID nguồn và đích.
+5. Chạy cell test 5 ảnh trước, sau đó mới chạy cell toàn bộ.
+
+Trên Colab pipeline dùng `--use-colab-auth`, không cần upload OAuth client JSON hay
+token cá nhân lên runtime.
+
+Notebook dùng `requirements.colab.txt` và gỡ PyTorch khỏi runtime vì PyTorch CUDA
+12.8 và PaddlePaddle CUDA 12.6 yêu cầu các phiên bản thư viện NVIDIA khác nhau.
+Pipeline OCR hiện tại không sử dụng PyTorch. Nếu đã chạy cell cài đặt cũ và gặp
+dependency conflict, chọn **Runtime > Restart session**, pull code mới và chạy lại
+các cell từ đầu.
+
 ## Giữ dữ liệu local
 
 Mặc định workspace từng sách bị xóa sau khi upload. Dùng tùy chọn sau để debug

@@ -12,6 +12,7 @@ import tempfile
 from pathlib import Path
 from typing import Any
 
+import google.auth
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -74,6 +75,11 @@ def parse_args() -> argparse.Namespace:
         ),
         help="Cached OAuth token; created automatically on first login.",
     )
+    parser.add_argument(
+        "--use-colab-auth",
+        action="store_true",
+        help="Use credentials created by google.colab.auth.authenticate_user().",
+    )
     parser.add_argument("--preset", choices=sorted(MODEL_PRESETS), default="medium")
     parser.add_argument("--device", default="cpu")
     parser.add_argument("--engine", default="transformers")
@@ -127,6 +133,13 @@ def authenticate(client_file: Path, token_file: Path) -> Credentials:
 
     token_file.parent.mkdir(parents=True, exist_ok=True)
     token_file.write_text(credentials.to_json(), encoding="utf-8")
+    return credentials
+
+
+def authenticate_colab() -> Any:
+    credentials, _ = google.auth.default(scopes=[DRIVE_SCOPE])
+    if not credentials.valid:
+        credentials.refresh(Request())
     return credentials
 
 
@@ -349,7 +362,11 @@ def main() -> int:
         return 2
 
     try:
-        credentials = authenticate(args.oauth_client_file.resolve(), args.oauth_token_file.resolve())
+        credentials = (
+            authenticate_colab()
+            if args.use_colab_auth
+            else authenticate(args.oauth_client_file.resolve(), args.oauth_token_file.resolve())
+        )
         service = build("drive", "v3", credentials=credentials, cache_discovery=False)
         if args.keep_work_dir:
             work_dir = args.keep_work_dir.resolve()

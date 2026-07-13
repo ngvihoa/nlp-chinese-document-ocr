@@ -1,0 +1,13 @@
+opencv-python
+numpy
+pillow
+pymupdf
+tqdm
+transformers
+safetensors
+paddleocr
+google-api-python-client
+google-auth-httplib2
+google-auth-oauthlib
+protobuf>=5.29.6,<7
+python-dotenv
