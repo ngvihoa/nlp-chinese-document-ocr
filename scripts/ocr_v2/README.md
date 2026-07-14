@@ -195,6 +195,9 @@ python scripts/ocr_v2/run_ocr_pipeline.py \
 - `raw`: giữ nguyên thứ tự PaddleOCR.
 - `--vertical-column-tolerance 320`: khoảng cách tâm x tối đa để gom box vào một cột.
 - `--min-score 0.3`: loại dòng nhận diện có confidence dưới `0.3`; raw JSON vẫn được giữ.
+- Model text-line orientation mặc định bị tắt để tránh tải model phụ và vì reading
+  order được xử lý từ polygon. Chỉ thêm `--use-textline-orientation` khi thực sự cần
+  nhận diện dòng bị xoay 180 độ.
 
 ## Output
 

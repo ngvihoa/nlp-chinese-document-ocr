@@ -93,6 +93,11 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--vertical-column-tolerance", type=float, default=320.0)
     parser.add_argument(
+        "--use-textline-orientation",
+        action="store_true",
+        help="Enable PaddleOCR text-line orientation model (disabled by default).",
+    )
+    parser.add_argument(
         "--skip-existing",
         action="store_true",
         help="Reuse local raw OCR JSON when --keep-work-dir is used.",

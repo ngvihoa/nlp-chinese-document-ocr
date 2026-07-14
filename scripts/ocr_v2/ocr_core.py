@@ -72,7 +72,7 @@ def build_paddleocr_command(
         "--use_doc_unwarping",
         "False",
         "--use_textline_orientation",
-        "True",
+        str(args.use_textline_orientation),
         "--save_path",
         str(raw_dir),
         "--device",
