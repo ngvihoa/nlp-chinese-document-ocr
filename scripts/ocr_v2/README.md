@@ -153,6 +153,10 @@ Notebook cũng dùng `--resume-from-drive`: trước khi OCR một sách, pipeli
 không chạy OCR; chỉ trang chưa có JSON mới sử dụng GPU. Vì vậy vẫn resume được sau
 khi Colab reset hoặc workspace local bị xóa.
 
+Ở chế độ resume, pipeline chỉ tải các file `_res.json` từ output Drive, không tải
+lại ảnh kết quả hoặc `.txt`. Nó liệt kê ảnh nguồn để giữ đúng số trang nhưng chỉ tải
+file ảnh của trang chưa có JSON. Text đã tồn tại trên Drive cũng không bị upload lại.
+
 Mỗi trang được upload ngay sau khi OCR xong: raw JSON, ảnh kết quả và text trang.
 Pipeline không chờ hoàn tất cả sách mới upload. Nếu timeout hoặc runtime dừng, chạy
 lại cùng cell; `--resume-from-drive` sẽ bỏ qua OCR cho các trang đã có raw JSON.

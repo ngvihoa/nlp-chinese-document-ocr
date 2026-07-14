@@ -212,6 +212,8 @@ def download_drive_tree(service: Any, folder_id: str, destination: Path) -> None
         if item["mimeType"] == FOLDER_MIME_TYPE:
             download_drive_tree(service, item["id"], target)
             continue
+        if not item["name"].endswith("_res.json"):
+            continue
         if item["mimeType"].startswith("application/vnd.google-apps."):
             continue
         target.parent.mkdir(parents=True, exist_ok=True)
@@ -222,6 +224,53 @@ def download_drive_tree(service: Any, folder_id: str, destination: Path) -> None
             while not done:
                 _, done = downloader.next_chunk(num_retries=DRIVE_API_RETRIES)
         print(f"[RESTORE] {target.relative_to(destination)}")
+
+
+def collect_drive_images(
+    service: Any,
+    folder_id: str,
+    relative_dir: Path = Path(),
+) -> list[tuple[dict[str, str], Path]]:
+    images: list[tuple[dict[str, str], Path]] = []
+    for item in sorted(list_folder_items(service, folder_id), key=lambda value: value["name"]):
+        relative_path = relative_dir / item["name"]
+        if item["mimeType"] == FOLDER_MIME_TYPE:
+            images.extend(collect_drive_images(service, item["id"], relative_path))
+        elif relative_path.suffix.lower() in IMAGE_EXTENSIONS:
+            images.append((item, relative_path))
+    return images
+
+
+def prepare_resume_images(
+    service: Any,
+    source_folder_id: str,
+    input_dir: Path,
+    output_dir: Path,
+    book_name: str,
+    limit: int | None,
+) -> tuple[Path, list[Path]]:
+    prefix = book_output_name(book_name)
+    remote_images = collect_drive_images(service, source_folder_id)
+    if limit is not None:
+        remote_images = remote_images[:limit]
+    normalized_dir = input_dir.parent / "normalized-input"
+    normalized_dir.mkdir(parents=True, exist_ok=True)
+    images: list[Path] = []
+    for page_number, (item, relative_path) in enumerate(remote_images, start=1):
+        target = normalized_dir / f"{prefix}_{page_number:03d}{relative_path.suffix.lower()}"
+        result_path = output_dir / "raw" / target.stem / f"{target.stem}_res.json"
+        if result_path.is_file():
+            target.touch(exist_ok=True)
+        else:
+            request = service.files().get_media(fileId=item["id"], supportsAllDrives=True)
+            with target.open("wb") as stream:
+                downloader = MediaIoBaseDownload(stream, request)
+                done = False
+                while not done:
+                    _, done = downloader.next_chunk(num_retries=DRIVE_API_RETRIES)
+            print(f"[DOWNLOAD] {relative_path}")
+        images.append(target)
+    return normalized_dir, images
 
 
 def find_child(service: Any, parent_id: str, name: str, mime_type: str | None = None) -> str | None:
@@ -263,9 +312,12 @@ def ensure_drive_folder(service: Any, parent_id: str, name: str) -> str:
     return folder["id"]
 
 
-def upload_file(service: Any, path: Path, parent_id: str) -> None:
+def upload_file(service: Any, path: Path, parent_id: str, skip_if_exists: bool = False) -> None:
     media = MediaFileUpload(str(path), resumable=True)
     existing_id = find_child(service, parent_id, path.name)
+    if existing_id and skip_if_exists:
+        print(f"[UPLOAD SKIP] {path.name}")
+        return
     if existing_id:
         service.files().update(
             fileId=existing_id,
@@ -304,7 +356,12 @@ def upload_page_result(
         )
         upload_tree(service, result.raw_result_path.parent, page_folder_id)
     if result.text_path.is_file():
-        upload_file(service, result.text_path, texts_folder_id)
+        upload_file(
+            service,
+            result.text_path,
+            texts_folder_id,
+            skip_if_exists=result.status == "skipped",
+        )
 
 
 def book_output_name(book_name: str) -> str:
@@ -344,17 +401,29 @@ def run_book(
             print(f"[RESUME] Restoring existing output for {output_name} from Drive")
             download_drive_tree(service, output_folder_id, args.output_dir)
             args.skip_existing = True
-        count = download_drive_images(
-            service,
-            book["id"],
-            input_dir,
-            args.max_images_per_book,
-        )
-        if count == 0:
+        if args.resume_from_drive:
+            normalized_input_dir, images = prepare_resume_images(
+                service,
+                book["id"],
+                input_dir,
+                args.output_dir,
+                book["name"],
+                args.max_images_per_book,
+            )
+        else:
+            count = download_drive_images(
+                service,
+                book["id"],
+                input_dir,
+                args.max_images_per_book,
+            )
+            if count == 0:
+                print(f"[SKIP] {book['name']}: no supported images")
+                return 0
+            normalized_input_dir, images = normalize_page_names(input_dir, book["name"])
+        if not images:
             print(f"[SKIP] {book['name']}: no supported images")
             return 0
-
-        normalized_input_dir, images = normalize_page_names(input_dir, book["name"])
         print(f"[BOOK] {book['name']}: OCR {len(images)} image(s)")
         raw_folder_id = ensure_drive_folder(service, output_folder_id, "raw")
         texts_folder_id = ensure_drive_folder(service, output_folder_id, "texts")
