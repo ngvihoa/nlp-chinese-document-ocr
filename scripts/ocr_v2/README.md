@@ -157,6 +157,11 @@ khi Colab reset hoặc workspace local bị xóa.
 lại ảnh kết quả hoặc `.txt`. Nó liệt kê ảnh nguồn để giữ đúng số trang nhưng chỉ tải
 file ảnh của trang chưa có JSON. Text đã tồn tại trên Drive cũng không bị upload lại.
 
+Nếu runtime Colab và `/content/ocr-v2-work` vẫn còn sau khi interrupt, có thể bỏ
+`--resume-from-drive` và chỉ giữ `--skip-existing`. Pipeline dùng JSON local, chỉ
+liệt kê metadata trên Drive và chỉ tải ảnh của trang chưa hoàn thành; nó không tải
+lại toàn bộ ảnh nguồn.
+
 Mỗi trang được upload ngay sau khi OCR xong: raw JSON, ảnh kết quả và text trang.
 Pipeline không chờ hoàn tất cả sách mới upload. Nếu timeout hoặc runtime dừng, chạy
 lại cùng cell; `--resume-from-drive` sẽ bỏ qua OCR cho các trang đã có raw JSON.

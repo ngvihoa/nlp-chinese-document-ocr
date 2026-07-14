@@ -401,7 +401,7 @@ def run_book(
             print(f"[RESUME] Restoring existing output for {output_name} from Drive")
             download_drive_tree(service, output_folder_id, args.output_dir)
             args.skip_existing = True
-        if args.resume_from_drive:
+        if args.resume_from_drive or args.skip_existing:
             normalized_input_dir, images = prepare_resume_images(
                 service,
                 book["id"],
