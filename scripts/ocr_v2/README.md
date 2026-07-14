@@ -143,6 +143,21 @@ Các lệnh Colab dùng `--engine paddle_static`, không dùng `transformers`. E
 `transformers` yêu cầu PyTorch/Torchvision, trong khi `paddle_static` chạy trực tiếp
 trên PaddlePaddle GPU và tránh xung đột CUDA với PyTorch có sẵn của Colab.
 
+Notebook giữ workspace tại `/content/ocr-v2-work` và dùng `--skip-existing`. Nếu
+network timeout trong lúc upload, chạy lại cùng cell: raw JSON OCR đã hoàn thành
+trong session sẽ được tái sử dụng. Drive API cũng tự retry tối đa 5 lần cho mỗi
+request. Lưu ý `/content` sẽ mất nếu Colab reset hoặc disconnect runtime hoàn toàn.
+
+Notebook cũng dùng `--resume-from-drive`: trước khi OCR một sách, pipeline tải output
+đã upload của sách đó về workspace. Trang có raw JSON sẽ chỉ được dựng lại text và
+không chạy OCR; chỉ trang chưa có JSON mới sử dụng GPU. Vì vậy vẫn resume được sau
+khi Colab reset hoặc workspace local bị xóa.
+
+Mỗi trang được upload ngay sau khi OCR xong: raw JSON, ảnh kết quả và text trang.
+Pipeline không chờ hoàn tất cả sách mới upload. Nếu timeout hoặc runtime dừng, chạy
+lại cùng cell; `--resume-from-drive` sẽ bỏ qua OCR cho các trang đã có raw JSON.
+`ocr_summary.json` và file `HVH_<số sách>_raw.txt` được tạo/upload khi hoàn tất sách.
+
 ## Giữ dữ liệu local
 
 Mặc định workspace từng sách bị xóa sau khi upload. Dùng tùy chọn sau để debug

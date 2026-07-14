@@ -28,6 +28,7 @@ load_dotenv(PROJECT_ROOT / ".env")
 
 from ocr_core import (  # noqa: E402
     IMAGE_EXTENSIONS,
+    ImageResult,
     MODEL_PRESETS,
     find_images,
     run_one_image,
@@ -37,6 +38,7 @@ from ocr_core import (  # noqa: E402
 
 DRIVE_SCOPE = "https://www.googleapis.com/auth/drive"
 FOLDER_MIME_TYPE = "application/vnd.google-apps.folder"
+DRIVE_API_RETRIES = 5
 
 
 def parse_args() -> argparse.Namespace:
@@ -94,6 +96,11 @@ def parse_args() -> argparse.Namespace:
         "--skip-existing",
         action="store_true",
         help="Reuse local raw OCR JSON when --keep-work-dir is used.",
+    )
+    parser.add_argument(
+        "--resume-from-drive",
+        action="store_true",
+        help="Download existing book output from Drive and reuse its raw OCR JSON.",
     )
     parser.add_argument(
         "--book-name",
@@ -159,7 +166,7 @@ def list_folder_items(service: Any, folder_id: str) -> list[dict[str, str]]:
                 supportsAllDrives=True,
                 includeItemsFromAllDrives=True,
             )
-            .execute()
+            .execute(num_retries=DRIVE_API_RETRIES)
         )
         items.extend(response.get("files", []))
         page_token = response.get("nextPageToken")
@@ -198,6 +205,25 @@ def download_drive_images(
     return downloaded
 
 
+def download_drive_tree(service: Any, folder_id: str, destination: Path) -> None:
+    destination.mkdir(parents=True, exist_ok=True)
+    for item in sorted(list_folder_items(service, folder_id), key=lambda value: value["name"]):
+        target = destination / item["name"]
+        if item["mimeType"] == FOLDER_MIME_TYPE:
+            download_drive_tree(service, item["id"], target)
+            continue
+        if item["mimeType"].startswith("application/vnd.google-apps."):
+            continue
+        target.parent.mkdir(parents=True, exist_ok=True)
+        request = service.files().get_media(fileId=item["id"], supportsAllDrives=True)
+        with target.open("wb") as stream:
+            downloader = MediaIoBaseDownload(stream, request)
+            done = False
+            while not done:
+                _, done = downloader.next_chunk(num_retries=DRIVE_API_RETRIES)
+        print(f"[RESTORE] {target.relative_to(destination)}")
+
+
 def find_child(service: Any, parent_id: str, name: str, mime_type: str | None = None) -> str | None:
     escaped_name = name.replace("'", "\\'")
     query = f"'{parent_id}' in parents and name = '{escaped_name}' and trashed = false"
@@ -215,7 +241,7 @@ def find_child(service: Any, parent_id: str, name: str, mime_type: str | None = 
             supportsAllDrives=True,
             includeItemsFromAllDrives=True,
         )
-        .execute()
+        .execute(num_retries=DRIVE_API_RETRIES)
     )
     files = response.get("files", [])
     return files[0]["id"] if files else None
@@ -232,7 +258,7 @@ def ensure_drive_folder(service: Any, parent_id: str, name: str) -> str:
             fields="id",
             supportsAllDrives=True,
         )
-        .execute()
+        .execute(num_retries=DRIVE_API_RETRIES)
     )
     return folder["id"]
 
@@ -245,13 +271,13 @@ def upload_file(service: Any, path: Path, parent_id: str) -> None:
             fileId=existing_id,
             media_body=media,
             supportsAllDrives=True,
-        ).execute()
+        ).execute(num_retries=DRIVE_API_RETRIES)
     else:
         service.files().create(
             body={"name": path.name, "parents": [parent_id]},
             media_body=media,
             supportsAllDrives=True,
-        ).execute()
+        ).execute(num_retries=DRIVE_API_RETRIES)
     print(f"[UPLOAD] {path.name}")
 
 
@@ -262,6 +288,23 @@ def upload_tree(service: Any, local_dir: Path, drive_folder_id: str) -> None:
             upload_tree(service, path, child_id)
         elif path.is_file():
             upload_file(service, path, drive_folder_id)
+
+
+def upload_page_result(
+    service: Any,
+    result: ImageResult,
+    raw_folder_id: str,
+    texts_folder_id: str,
+) -> None:
+    if result.status == "ok" and result.raw_result_path:
+        page_folder_id = ensure_drive_folder(
+            service,
+            raw_folder_id,
+            result.raw_result_path.parent.name,
+        )
+        upload_tree(service, result.raw_result_path.parent, page_folder_id)
+    if result.text_path.is_file():
+        upload_file(service, result.text_path, texts_folder_id)
 
 
 def book_output_name(book_name: str) -> str:
@@ -295,6 +338,12 @@ def run_book(
     input_dir = book_dir / "input"
     args.output_dir = book_dir / "output"
     try:
+        output_name = book_output_name(book["name"])
+        output_folder_id = ensure_drive_folder(service, destination_id, output_name)
+        if args.resume_from_drive:
+            print(f"[RESUME] Restoring existing output for {output_name} from Drive")
+            download_drive_tree(service, output_folder_id, args.output_dir)
+            args.skip_existing = True
         count = download_drive_images(
             service,
             book["id"],
@@ -305,15 +354,21 @@ def run_book(
             print(f"[SKIP] {book['name']}: no supported images")
             return 0
 
-        output_name = book_output_name(book["name"])
         normalized_input_dir, images = normalize_page_names(input_dir, book["name"])
         print(f"[BOOK] {book['name']}: OCR {len(images)} image(s)")
-        results = [run_one_image(args, image, normalized_input_dir) for image in images]
+        raw_folder_id = ensure_drive_folder(service, output_folder_id, "raw")
+        texts_folder_id = ensure_drive_folder(service, output_folder_id, "texts")
+        results: list[ImageResult] = []
+        for page_number, image in enumerate(images, start=1):
+            result = run_one_image(args, image, normalized_input_dir)
+            results.append(result)
+            upload_page_result(service, result, raw_folder_id, texts_folder_id)
+            print(f"[PAGE DONE] {output_name} page {page_number}/{len(images)}")
         write_summary(args.output_dir, results)
         combined_text = args.output_dir / "ocr_texts.txt"
         combined_text.rename(args.output_dir / f"{output_name}_raw.txt")
-        output_folder_id = ensure_drive_folder(service, destination_id, output_name)
-        upload_tree(service, args.output_dir, output_folder_id)
+        upload_file(service, args.output_dir / "ocr_summary.json", output_folder_id)
+        upload_file(service, args.output_dir / f"{output_name}_raw.txt", output_folder_id)
         failed = sum(result.status == "failed" for result in results)
         print(f"[BOOK DONE] {book['name']} | OK: {len(results) - failed} | Failed: {failed}")
         return failed
