@@ -26,12 +26,22 @@ load_dotenv(PROJECT_ROOT / ".env")
 DRIVE_SCOPE = "https://www.googleapis.com/auth/drive"
 DRIVE_API_RETRIES = 5
 
-SENTENCE_ENDINGS = "。！？；.!?;"
+SENTENCE_ENDINGS = "。！？；：.!?;:"
 SENTENCE_CLOSERS = "」』”’】）》〕〉"
-SENTENCE_SPLIT_PATTERN = re.compile(
-    rf"([^{re.escape(SENTENCE_ENDINGS)}\n]*[{re.escape(SENTENCE_ENDINGS)}]"
-    rf"[{re.escape(SENTENCE_CLOSERS)}]*)"
-)
+BRACKET_PAIRS = {
+    "「": "」",
+    "『": "』",
+    "“": "”",
+    "‘": "’",
+    "（": "）",
+    "(": ")",
+    "【": "】",
+    "[": "]",
+    "《": "》",
+    "〈": "〉",
+    "〔": "〕",
+}
+BRACKET_CLOSERS = set(BRACKET_PAIRS.values())
 PAGE_MARKER_PATTERN = re.compile(
     r'<page\s+id="(?P<page_id>[^"]+)">\s*(?P<content>.*?)\s*</page>',
     re.DOTALL | re.IGNORECASE,
@@ -254,12 +264,40 @@ def count_sentence_endings(text: str) -> int:
 
 def split_sentence_chunks(text: str) -> list[str]:
     chunks: list[str] = []
+    bracket_stack: list[str] = []
     position = 0
-    for match in SENTENCE_SPLIT_PATTERN.finditer(text):
-        chunk = match.group(0).strip()
+    index = 0
+
+    while index < len(text):
+        char = text[index]
+        if char in BRACKET_PAIRS:
+            bracket_stack.append(BRACKET_PAIRS[char])
+            index += 1
+            continue
+        if char in BRACKET_CLOSERS:
+            if bracket_stack and bracket_stack[-1] == char:
+                bracket_stack.pop()
+            index += 1
+            continue
+
+        is_ending = char in SENTENCE_ENDINGS
+        if char in ":：" and bracket_stack:
+            is_ending = False
+        if not is_ending:
+            index += 1
+            continue
+
+        end = index + 1
+        while end < len(text) and text[end] in SENTENCE_CLOSERS:
+            if bracket_stack and bracket_stack[-1] == text[end]:
+                bracket_stack.pop()
+            end += 1
+        chunk = text[position:end].strip()
         if chunk:
             chunks.append(chunk)
-        position = match.end()
+        position = end
+        index = end
+
     remainder = text[position:].strip()
     if remainder:
         chunks.extend(line.strip() for line in remainder.splitlines() if line.strip())

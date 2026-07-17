@@ -73,8 +73,10 @@ Notebook mẫu có sẵn tại `scripts/segmentation/colab_segmentation_pipeline
 
 ## Quy ước tách câu
 
-- Tách theo dấu câu Hán văn và dấu câu phổ biến: `。！？；.!?;`
-- Không tách câu tại dấu hai chấm `：` hoặc `:`.
+- Tách theo dấu câu Hán văn và dấu câu phổ biến: `。！？；：.!?;:`
+- Dấu hai chấm `：` hoặc `:` chỉ kết thúc câu khi nằm ngoài một cặp ngoặc.
+  Dấu hai chấm nằm trong các cặp như `「」`, `『』`, `（）`, `【】`, `《》`
+  không làm tách câu.
 - Giữ dấu câu ở cuối câu.
 - Giữ dấu ngoặc đóng như `」`, `』` ở cùng câu với dấu kết thúc đứng trước nó,
   kể cả khi OCR đặt dấu ngoặc ở đầu dòng tiếp theo.
