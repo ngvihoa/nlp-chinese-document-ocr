@@ -39,9 +39,14 @@ def parse_args() -> argparse.Namespace:
         description="Run sentence segmentation on one OCR text file stored in Google Drive.",
     )
     parser.add_argument(
-        "--drive-folder-id",
-        default=os.getenv("GOOGLE_DRIVE_POST_PROCESSING_FOLDER_ID"),
-        help="Drive folder ID containing OCR text files and segmentation outputs.",
+        "--drive-input-folder-id",
+        default=os.getenv("GOOGLE_DRIVE_SEGMENTATION_INPUT_FOLDER_ID"),
+        help="Drive folder ID containing OCR text files.",
+    )
+    parser.add_argument(
+        "--drive-output-folder-id",
+        default=os.getenv("GOOGLE_DRIVE_SEGMENTATION_OUTPUT_FOLDER_ID"),
+        help="Drive folder ID that receives segmentation TSV files.",
     )
     parser.add_argument(
         "--oauth-client-file",
@@ -311,9 +316,12 @@ def run_segmentation(local_input: Path, local_output: Path, doc_id: str) -> int:
 
 
 def process_one_file(args: argparse.Namespace, service: Any, work_dir: Path) -> int:
-    source_file = find_child(service, args.drive_folder_id, args.file_name)
+    source_file = find_child(service, args.drive_input_folder_id, args.file_name)
     if source_file is None:
-        print(f"ERROR: Cannot find {args.file_name} in Drive folder {args.drive_folder_id}.", file=sys.stderr)
+        print(
+            f"ERROR: Cannot find {args.file_name} in Drive folder {args.drive_input_folder_id}.",
+            file=sys.stderr,
+        )
         return 2
     if source_file["mimeType"].startswith("application/vnd.google-apps."):
         print(f"ERROR: {args.file_name} is not a downloadable text file.", file=sys.stderr)
@@ -321,7 +329,7 @@ def process_one_file(args: argparse.Namespace, service: Any, work_dir: Path) -> 
 
     doc_id = args.doc_id or derive_doc_id(args.file_name)
     output_name = output_file_name(args.file_name)
-    existing_output = find_child(service, args.drive_folder_id, output_name)
+    existing_output = find_child(service, args.drive_output_folder_id, output_name)
     if existing_output and not args.force:
         print(f"[SKIP] {output_name} already exists on Drive. Use --force to regenerate.")
         return 0
@@ -330,7 +338,7 @@ def process_one_file(args: argparse.Namespace, service: Any, work_dir: Path) -> 
     local_output = work_dir / output_name
     download_drive_file(service, source_file["id"], local_input)
     sentence_count = run_segmentation(local_input, local_output, doc_id)
-    upload_file(service, local_output, args.drive_folder_id)
+    upload_file(service, local_output, args.drive_output_folder_id)
     print(f"[DONE] {args.file_name} -> {output_name} | sentences: {sentence_count}")
     return 0
 
@@ -339,8 +347,11 @@ def main() -> int:
     from googleapiclient.discovery import build
 
     args = parse_args()
-    if not args.drive_folder_id:
-        print("ERROR: Drive folder ID is required.", file=sys.stderr)
+    if not args.drive_input_folder_id:
+        print("ERROR: Drive input folder ID is required.", file=sys.stderr)
+        return 2
+    if not args.drive_output_folder_id:
+        print("ERROR: Drive output folder ID is required.", file=sys.stderr)
         return 2
 
     try:
