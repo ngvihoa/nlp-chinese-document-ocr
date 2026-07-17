@@ -77,6 +77,8 @@ Notebook mẫu có sẵn tại `scripts/segmentation/colab_segmentation_pipeline
 - Dấu hai chấm `：` hoặc `:` chỉ kết thúc câu khi nằm ngoài một cặp ngoặc.
   Dấu hai chấm nằm trong các cặp như `「」`, `『』`, `（）`, `【】`, `《》`
   không làm tách câu.
+- Không tách tại dấu `.` nằm giữa các chữ cái hoặc chữ số Latin, ví dụ mã tài
+  liệu `H.M.2205` hoặc số thập phân `3.14`.
 - Giữ dấu câu ở cuối câu.
 - Giữ dấu ngoặc đóng như `」`, `』` ở cùng câu với dấu kết thúc đứng trước nó,
   kể cả khi OCR đặt dấu ngoặc ở đầu dòng tiếp theo.

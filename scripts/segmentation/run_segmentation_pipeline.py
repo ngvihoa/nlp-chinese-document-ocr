@@ -262,6 +262,10 @@ def count_sentence_endings(text: str) -> int:
     return sum(text.count(mark) for mark in SENTENCE_ENDINGS)
 
 
+def is_ascii_alphanumeric(char: str) -> bool:
+    return char.isascii() and char.isalnum()
+
+
 def split_sentence_chunks(text: str) -> list[str]:
     chunks: list[str] = []
     bracket_stack: list[str] = []
@@ -282,6 +286,14 @@ def split_sentence_chunks(text: str) -> list[str]:
 
         is_ending = char in SENTENCE_ENDINGS
         if char in ":：" and bracket_stack:
+            is_ending = False
+        if (
+            char == "."
+            and index > 0
+            and index + 1 < len(text)
+            and is_ascii_alphanumeric(text[index - 1])
+            and is_ascii_alphanumeric(text[index + 1])
+        ):
             is_ending = False
         if not is_ending:
             index += 1
