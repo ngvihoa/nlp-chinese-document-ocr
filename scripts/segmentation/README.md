@@ -76,6 +76,8 @@ Notebook mẫu có sẵn tại `scripts/segmentation/colab_segmentation_pipeline
 - Tách theo dấu câu Hán văn và dấu câu phổ biến: `。！？；.!?;`
 - Không tách câu tại dấu hai chấm `：` hoặc `:`.
 - Giữ dấu câu ở cuối câu.
+- Giữ dấu ngoặc đóng như `」`, `』` ở cùng câu với dấu kết thúc đứng trước nó,
+  kể cả khi OCR đặt dấu ngoặc ở đầu dòng tiếp theo.
 - Loại bỏ khoảng trắng dư thừa và khoảng trắng full-width.
 - Nếu văn bản không có dấu câu, tách theo từng dòng.
 - Gán ID cho từng câu theo định dạng bên dưới và lưu kết quả vào file `.tsv`.

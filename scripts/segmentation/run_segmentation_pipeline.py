@@ -27,7 +27,11 @@ DRIVE_SCOPE = "https://www.googleapis.com/auth/drive"
 DRIVE_API_RETRIES = 5
 
 SENTENCE_ENDINGS = "。！？；.!?;"
-SENTENCE_SPLIT_PATTERN = re.compile(rf"([^{re.escape(SENTENCE_ENDINGS)}\n]*[{re.escape(SENTENCE_ENDINGS)}])")
+SENTENCE_CLOSERS = "」』”’】）》〕〉"
+SENTENCE_SPLIT_PATTERN = re.compile(
+    rf"([^{re.escape(SENTENCE_ENDINGS)}\n]*[{re.escape(SENTENCE_ENDINGS)}]"
+    rf"[{re.escape(SENTENCE_CLOSERS)}]*)"
+)
 PAGE_MARKER_PATTERN = re.compile(
     r'<page\s+id="(?P<page_id>[^"]+)">\s*(?P<content>.*?)\s*</page>',
     re.DOTALL | re.IGNORECASE,
@@ -268,10 +272,17 @@ def segment_plain_text(text: str) -> list[str]:
         return []
     if count_sentence_endings(normalized) == 0:
         return [line.strip() for line in normalized.splitlines() if line.strip()]
-    sentences: list[str] = []
+    blocks: list[str] = []
     for block in normalized.split("\n"):
         if not block:
             continue
+        if blocks and block.startswith(tuple(SENTENCE_CLOSERS)):
+            blocks[-1] += block
+        else:
+            blocks.append(block)
+
+    sentences: list[str] = []
+    for block in blocks:
         sentences.extend(split_sentence_chunks(block))
     return [sentence for sentence in sentences if sentence]
 
