@@ -73,7 +73,8 @@ Notebook mẫu có sẵn tại `scripts/segmentation/colab_segmentation_pipeline
 
 ## Quy ước tách câu
 
-- Tách theo dấu câu Hán văn và dấu câu phổ biến: `。！？；：.!?;:`
+- Tách theo dấu câu Hán văn và dấu câu phổ biến: `。！？；.!?;`
+- Không tách câu tại dấu hai chấm `：` hoặc `:`.
 - Giữ dấu câu ở cuối câu.
 - Loại bỏ khoảng trắng dư thừa và khoảng trắng full-width.
 - Nếu văn bản không có dấu câu, tách theo từng dòng.

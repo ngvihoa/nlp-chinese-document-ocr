@@ -26,7 +26,7 @@ load_dotenv(PROJECT_ROOT / ".env")
 DRIVE_SCOPE = "https://www.googleapis.com/auth/drive"
 DRIVE_API_RETRIES = 5
 
-SENTENCE_ENDINGS = "。！？；：.!?;:"
+SENTENCE_ENDINGS = "。！？；.!?;"
 SENTENCE_SPLIT_PATTERN = re.compile(rf"([^{re.escape(SENTENCE_ENDINGS)}\n]*[{re.escape(SENTENCE_ENDINGS)}])")
 PAGE_MARKER_PATTERN = re.compile(
     r'<page\s+id="(?P<page_id>[^"]+)">\s*(?P<content>.*?)\s*</page>',
