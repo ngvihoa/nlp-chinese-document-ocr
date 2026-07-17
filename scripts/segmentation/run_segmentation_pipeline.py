@@ -239,6 +239,10 @@ def normalize_text(text: str) -> str:
     return "\n".join(compact_lines).strip()
 
 
+def count_sentence_endings(text: str) -> int:
+    return sum(text.count(mark) for mark in SENTENCE_ENDINGS)
+
+
 def split_sentence_chunks(text: str) -> list[str]:
     chunks: list[str] = []
     position = 0
@@ -257,7 +261,7 @@ def segment_plain_text(text: str) -> list[str]:
     normalized = normalize_text(text)
     if not normalized:
         return []
-    if not any(mark in normalized for mark in SENTENCE_ENDINGS):
+    if count_sentence_endings(normalized) == 0:
         return [line.strip() for line in normalized.splitlines() if line.strip()]
     sentences: list[str] = []
     for block in normalized.split("\n"):

@@ -11,7 +11,6 @@ Input tren Google Drive:
 ```text
 post_processing/
 ├── HVH_016_clean.txt
-├── HVH_020_clean.txt
 ```
 
 Output sau khi chay:
@@ -20,7 +19,6 @@ Output sau khi chay:
 post_processing/
 ├── HVH_016_clean.txt
 ├── HVH_016_seg.tsv
-├── HVH_020_clean.txt
 ```
 
 Pipeline chi xu ly mot file cho moi lan chay. No chi tai file can xu ly, khong dong bo
@@ -75,8 +73,8 @@ Notebook mau co san tai `scripts/segmentation/colab_segmentation_pipeline.ipynb`
 - Tach theo dau cau Han van va dau cau pho bien: `。！？；：.!?;:`
 - Giu dau cau o cuoi cau
 - Loai bo khoang trang du thua va full-width space
-- Neu van ban khong co dau cau, fallback tach theo tung dong
-- Neu OCR text co the `<page id="...">...</page>`, pipeline se tao sentence id theo page
+- Neu van ban khong co dau cau, fallback tach theo tung dong (đếm số dấu câu trước, nếu dấu câu = 0 thì mới dùng cái này)
+- Sau khi tách câu nhớ gán id theo định dạng output bên dưới, và lưu vào file .tsv
 
 ## Dinh dang output
 
