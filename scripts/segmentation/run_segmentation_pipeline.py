@@ -214,9 +214,9 @@ def derive_doc_id(file_name: str) -> str:
 
 def output_file_name(file_name: str) -> str:
     if file_name.lower().endswith("_clean.txt"):
-        return f"{file_name[:-10]}_seg.tsv"
+        return f"{file_name[0:3] + '_311' + file_name[3:-10]}_seg.tsv"
     if file_name.lower().endswith(".txt"):
-        return f"{file_name[:-4]}_seg.tsv"
+        return f"{file_name[0:3] + '_311' + file_name[3:-4]}_seg.tsv"
     raise ValueError(f"Input file must end with .txt: {file_name}")
 
 
@@ -325,7 +325,7 @@ def process_one_file(args: argparse.Namespace, service: Any, work_dir: Path) -> 
     if existing_output and not args.force:
         print(f"[SKIP] {output_name} already exists on Drive. Use --force to regenerate.")
         return 0
-
+    doc_id = output_name[:-8] # Remove the _seg.tsv suffix
     local_input = work_dir / args.file_name
     local_output = work_dir / output_name
     download_drive_file(service, source_file["id"], local_input)
