@@ -57,3 +57,26 @@ python scripts/ocr_v2/run_ocr_pipeline.py \
 
 Xem hướng dẫn OAuth, `.env`, cấu trúc Drive và toàn bộ ví dụ tại
 [`scripts/ocr_v2/README.md`](scripts/ocr_v2/README.md).
+
+## Sentence segmentation
+
+Pipeline segmentation tải một file OCR text từ folder input, tách câu, tạo file TSV
+và upload kết quả vào một folder output riêng trên Google Drive:
+
+```bash
+python scripts/segmentation/run_segmentation_pipeline.py \
+  --drive-input-folder-id "YOUR_INPUT_FOLDER_ID" \
+  --drive-output-folder-id "YOUR_OUTPUT_FOLDER_ID" \
+  --file-name "HVH_016_clean.txt"
+```
+
+Có thể cấu hình hai folder trong `.env`:
+
+```dotenv
+GOOGLE_DRIVE_SEGMENTATION_INPUT_FOLDER_ID=ID_FOLDER_CHUA_OCR_TEXT
+GOOGLE_DRIVE_SEGMENTATION_OUTPUT_FOLDER_ID=ID_FOLDER_NHAN_SEGMENTATION_TSV
+```
+
+File `HVH_016_clean.txt` được chuyển thành `HVH_016_seg.tsv`. Xem quy tắc tách
+câu, xác thực Google Drive và cách chạy trên Colab tại
+[`scripts/segmentation/README.md`](scripts/segmentation/README.md).

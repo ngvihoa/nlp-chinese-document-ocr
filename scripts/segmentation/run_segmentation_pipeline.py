@@ -27,7 +27,21 @@ DRIVE_SCOPE = "https://www.googleapis.com/auth/drive"
 DRIVE_API_RETRIES = 5
 
 SENTENCE_ENDINGS = "。！？；：.!?;:"
-SENTENCE_SPLIT_PATTERN = re.compile(rf"([^{re.escape(SENTENCE_ENDINGS)}\n]*[{re.escape(SENTENCE_ENDINGS)}])")
+SENTENCE_CLOSERS = "」』”’】）》〕〉"
+BRACKET_PAIRS = {
+    "「": "」",
+    "『": "』",
+    "“": "”",
+    "‘": "’",
+    "（": "）",
+    "(": ")",
+    "【": "】",
+    "[": "]",
+    "《": "》",
+    "〈": "〉",
+    "〔": "〕",
+}
+BRACKET_CLOSERS = set(BRACKET_PAIRS.values())
 PAGE_MARKER_PATTERN = re.compile(
     r'<page\s+id="(?P<page_id>[^"]+)">\s*(?P<content>.*?)\s*</page>',
     re.DOTALL | re.IGNORECASE,
@@ -39,9 +53,14 @@ def parse_args() -> argparse.Namespace:
         description="Run sentence segmentation on one OCR text file stored in Google Drive.",
     )
     parser.add_argument(
-        "--drive-folder-id",
-        default=os.getenv("GOOGLE_DRIVE_POST_PROCESSING_FOLDER_ID"),
-        help="Drive folder ID containing OCR text files and segmentation outputs.",
+        "--drive-input-folder-id",
+        default=os.getenv("GOOGLE_DRIVE_SEGMENTATION_INPUT_FOLDER_ID"),
+        help="Drive folder ID containing OCR text files.",
+    )
+    parser.add_argument(
+        "--drive-output-folder-id",
+        default=os.getenv("GOOGLE_DRIVE_SEGMENTATION_OUTPUT_FOLDER_ID"),
+        help="Drive folder ID that receives segmentation TSV files.",
     )
     parser.add_argument(
         "--oauth-client-file",
@@ -243,14 +262,54 @@ def count_sentence_endings(text: str) -> int:
     return sum(text.count(mark) for mark in SENTENCE_ENDINGS)
 
 
+def is_ascii_alphanumeric(char: str) -> bool:
+    return char.isascii() and char.isalnum()
+
+
 def split_sentence_chunks(text: str) -> list[str]:
     chunks: list[str] = []
+    bracket_stack: list[str] = []
     position = 0
-    for match in SENTENCE_SPLIT_PATTERN.finditer(text):
-        chunk = match.group(0).strip()
+    index = 0
+
+    while index < len(text):
+        char = text[index]
+        if char in BRACKET_PAIRS:
+            bracket_stack.append(BRACKET_PAIRS[char])
+            index += 1
+            continue
+        if char in BRACKET_CLOSERS:
+            if bracket_stack and bracket_stack[-1] == char:
+                bracket_stack.pop()
+            index += 1
+            continue
+
+        is_ending = char in SENTENCE_ENDINGS
+        if char in ":：" and bracket_stack:
+            is_ending = False
+        if (
+            char == "."
+            and index > 0
+            and index + 1 < len(text)
+            and is_ascii_alphanumeric(text[index - 1])
+            and is_ascii_alphanumeric(text[index + 1])
+        ):
+            is_ending = False
+        if not is_ending:
+            index += 1
+            continue
+
+        end = index + 1
+        while end < len(text) and text[end] in SENTENCE_CLOSERS:
+            if bracket_stack and bracket_stack[-1] == text[end]:
+                bracket_stack.pop()
+            end += 1
+        chunk = text[position:end].strip()
         if chunk:
             chunks.append(chunk)
-        position = match.end()
+        position = end
+        index = end
+
     remainder = text[position:].strip()
     if remainder:
         chunks.extend(line.strip() for line in remainder.splitlines() if line.strip())
@@ -263,10 +322,17 @@ def segment_plain_text(text: str) -> list[str]:
         return []
     if count_sentence_endings(normalized) == 0:
         return [line.strip() for line in normalized.splitlines() if line.strip()]
-    sentences: list[str] = []
+    blocks: list[str] = []
     for block in normalized.split("\n"):
         if not block:
             continue
+        if blocks and block.startswith(tuple(SENTENCE_CLOSERS)):
+            blocks[-1] += block
+        else:
+            blocks.append(block)
+
+    sentences: list[str] = []
+    for block in blocks:
         sentences.extend(split_sentence_chunks(block))
     return [sentence for sentence in sentences if sentence]
 
@@ -311,9 +377,12 @@ def run_segmentation(local_input: Path, local_output: Path, doc_id: str) -> int:
 
 
 def process_one_file(args: argparse.Namespace, service: Any, work_dir: Path) -> int:
-    source_file = find_child(service, args.drive_folder_id, args.file_name)
+    source_file = find_child(service, args.drive_input_folder_id, args.file_name)
     if source_file is None:
-        print(f"ERROR: Cannot find {args.file_name} in Drive folder {args.drive_folder_id}.", file=sys.stderr)
+        print(
+            f"ERROR: Cannot find {args.file_name} in Drive folder {args.drive_input_folder_id}.",
+            file=sys.stderr,
+        )
         return 2
     if source_file["mimeType"].startswith("application/vnd.google-apps."):
         print(f"ERROR: {args.file_name} is not a downloadable text file.", file=sys.stderr)
@@ -321,7 +390,7 @@ def process_one_file(args: argparse.Namespace, service: Any, work_dir: Path) -> 
 
     doc_id = args.doc_id or derive_doc_id(args.file_name)
     output_name = output_file_name(args.file_name)
-    existing_output = find_child(service, args.drive_folder_id, output_name)
+    existing_output = find_child(service, args.drive_output_folder_id, output_name)
     if existing_output and not args.force:
         print(f"[SKIP] {output_name} already exists on Drive. Use --force to regenerate.")
         return 0
@@ -330,7 +399,7 @@ def process_one_file(args: argparse.Namespace, service: Any, work_dir: Path) -> 
     local_output = work_dir / output_name
     download_drive_file(service, source_file["id"], local_input)
     sentence_count = run_segmentation(local_input, local_output, doc_id)
-    upload_file(service, local_output, args.drive_folder_id)
+    upload_file(service, local_output, args.drive_output_folder_id)
     print(f"[DONE] {args.file_name} -> {output_name} | sentences: {sentence_count}")
     return 0
 
@@ -339,8 +408,11 @@ def main() -> int:
     from googleapiclient.discovery import build
 
     args = parse_args()
-    if not args.drive_folder_id:
-        print("ERROR: Drive folder ID is required.", file=sys.stderr)
+    if not args.drive_input_folder_id:
+        print("ERROR: Drive input folder ID is required.", file=sys.stderr)
+        return 2
+    if not args.drive_output_folder_id:
+        print("ERROR: Drive output folder ID is required.", file=sys.stderr)
         return 2
 
     try:

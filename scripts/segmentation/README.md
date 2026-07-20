@@ -1,55 +1,57 @@
 # Sentence Segmentation Pipeline
 
-Pipeline nay tai mot file OCR text tu Google Drive, tach cau, va upload file TSV tro lai
-cung folder. Cac buoc download, upload, xac thuc Google Drive va workspace tam duoc
-giu cung phong cach voi `scripts/ocr_v2/run_ocr_pipeline.py`.
+Pipeline này tải một file OCR text từ thư mục input trên Google Drive, tách câu và
+upload file TSV vào thư mục output riêng. Các bước download, upload, xác thực
+Google Drive và workspace tạm được giữ cùng phong cách với
+`scripts/ocr_v2/run_ocr_pipeline.py`.
 
-## Input va output
+## Input và output
 
-Input tren Google Drive:
+Thư mục input trên Google Drive:
 
 ```text
-post_processing/
+ocr_text/
 ├── HVH_016_clean.txt
 ```
 
-Output sau khi chay:
+Thư mục output sau khi chạy:
 
 ```text
-post_processing/
-├── HVH_016_clean.txt
+segmentation/
 ├── HVH_016_seg.tsv
 ```
 
-Pipeline chi xu ly mot file cho moi lan chay. No chi tai file can xu ly, khong dong bo
-toan bo folder.
+Pipeline chỉ xử lý một file cho mỗi lần chạy. Nó chỉ tải file cần xử lý, không đồng
+bộ toàn bộ thư mục.
 
-## Cau hinh
+## Cấu hình
 
-Dat `.env` tai thu muc goc:
+Đặt `.env` tại thư mục gốc:
 
 ```dotenv
-GOOGLE_DRIVE_POST_PROCESSING_FOLDER_ID=ID_FOLDER_POST_PROCESSING
+GOOGLE_DRIVE_SEGMENTATION_INPUT_FOLDER_ID=ID_FOLDER_CHUA_OCR_TEXT
+GOOGLE_DRIVE_SEGMENTATION_OUTPUT_FOLDER_ID=ID_FOLDER_NHAN_SEGMENTATION_TSV
 GOOGLE_OAUTH_CLIENT_FILE=./secrets/google-drive-oauth-client.json
 GOOGLE_OAUTH_TOKEN_FILE=./secrets/google-drive-token.json
 ```
 
-## Chay local
+## Chạy local
 
 ```bash
 python scripts/segmentation/run_segmentation_pipeline.py \
   --file-name "HVH_016_clean.txt"
 ```
 
-Chi dinh ro folder Drive neu khong dung `.env`:
+Chỉ định rõ các thư mục Drive nếu không dùng `.env`:
 
 ```bash
 python scripts/segmentation/run_segmentation_pipeline.py \
-  --drive-folder-id "YOUR_FOLDER_ID" \
+  --drive-input-folder-id "YOUR_INPUT_FOLDER_ID" \
+  --drive-output-folder-id "YOUR_OUTPUT_FOLDER_ID" \
   --file-name "HVH_016_clean.txt"
 ```
 
-Ghi de output da ton tai:
+Ghi đè output đã tồn tại:
 
 ```bash
 python scripts/segmentation/run_segmentation_pipeline.py \
@@ -57,39 +59,47 @@ python scripts/segmentation/run_segmentation_pipeline.py \
   --force
 ```
 
-## Chay tren Colab
+## Chạy trên Colab
 
 ```bash
 !/content/post_processing_env/bin/python scripts/segmentation/run_segmentation_pipeline.py \
   --use-colab-auth \
-  --drive-folder-id "{DRIVE_POST_PROCESSING_FOLDER_ID}" \
+  --drive-input-folder-id "{DRIVE_SEGMENTATION_INPUT_FOLDER_ID}" \
+  --drive-output-folder-id "{DRIVE_SEGMENTATION_OUTPUT_FOLDER_ID}" \
   --file-name "HVH_016_clean.txt"
 ```
 
-Notebook mau co san tai `scripts/segmentation/colab_segmentation_pipeline.ipynb`.
+Notebook mẫu có sẵn tại `scripts/segmentation/colab_segmentation_pipeline.ipynb`.
 
-## Quy uoc tach cau
+## Quy ước tách câu
 
-- Tach theo dau cau Han van va dau cau pho bien: `。！？；：.!?;:`
-- Giu dau cau o cuoi cau
-- Loai bo khoang trang du thua va full-width space
-- Neu van ban khong co dau cau, fallback tach theo tung dong (đếm số dấu câu trước, nếu dấu câu = 0 thì mới dùng cái này)
-- Sau khi tách câu nhớ gán id theo định dạng output bên dưới, và lưu vào file .tsv
+- Tách theo dấu câu Hán văn và dấu câu phổ biến: `。！？；：.!?;:`
+- Dấu hai chấm `：` hoặc `:` chỉ kết thúc câu khi nằm ngoài một cặp ngoặc.
+  Dấu hai chấm nằm trong các cặp như `「」`, `『』`, `（）`, `【】`, `《》`
+  không làm tách câu.
+- Không tách tại dấu `.` nằm giữa các chữ cái hoặc chữ số Latin, ví dụ mã tài
+  liệu `H.M.2205` hoặc số thập phân `3.14`.
+- Giữ dấu câu ở cuối câu.
+- Giữ dấu ngoặc đóng như `」`, `』` ở cùng câu với dấu kết thúc đứng trước nó,
+  kể cả khi OCR đặt dấu ngoặc ở đầu dòng tiếp theo.
+- Loại bỏ khoảng trắng dư thừa và khoảng trắng full-width.
+- Nếu văn bản không có dấu câu, tách theo từng dòng.
+- Gán ID cho từng câu theo định dạng bên dưới và lưu kết quả vào file `.tsv`.
 
-## Dinh dang output
+## Định dạng output
 
 ```text
 sentence_id<TAB>sentence
 ```
 
-Neu input co page marker:
+Nếu input có page marker:
 
 ```text
 HVH_001_000001\t春正月帝幸布海口。
 HVH_001_000002\t詔群臣議事。
 ```
 
-Neu input la mot file OCR text phang:
+Nếu input là một file OCR text phẳng:
 
 ```text
 HVH_016_000001\t春正月帝幸布海口。
