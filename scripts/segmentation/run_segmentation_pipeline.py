@@ -46,6 +46,10 @@ PAGE_MARKER_PATTERN = re.compile(
     r'<page\s+id="(?P<page_id>[^"]+)">\s*(?P<content>.*?)\s*</page>',
     re.DOTALL | re.IGNORECASE,
 )
+DOC_VOLUME_PATTERN = re.compile(
+    r"^HVH_(?:311_)?(?P<volume>\d{3})(?:_(?:raw|clean))?(?:_seg)?\.(?:txt|tsv)$",
+    re.IGNORECASE,
+)
 
 
 def parse_args() -> argparse.Namespace:
@@ -92,7 +96,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--file-name",
         required=True,
-        help="Exact OCR text filename in the Drive folder, for example HVH_016_clean.txt.",
+        help="Exact OCR raw text filename in the Drive folder, for example HVH_311_016_raw.txt.",
     )
     parser.add_argument(
         "--doc-id",
@@ -222,21 +226,20 @@ def upload_file(service: Any, path: Path, parent_id: str) -> None:
 
 
 def derive_doc_id(file_name: str) -> str:
-    match = re.match(r"(?P<doc_id>.+?)_clean\.txt$", file_name, re.IGNORECASE)
+    match = DOC_VOLUME_PATTERN.match(file_name)
     if match:
-        return match.group("doc_id")
-    match = re.match(r"(?P<doc_id>.+?)\.txt$", file_name, re.IGNORECASE)
-    if match:
-        return match.group("doc_id")
+        return f"HVH_311_{match.group('volume')}"
     raise ValueError(f"Cannot derive doc id from file name: {file_name}")
 
 
 def output_file_name(file_name: str) -> str:
-    if file_name.lower().endswith("_clean.txt"):
-        return f"{file_name[0:3] + '_311' + file_name[3:-10]}_seg.tsv"
-    if file_name.lower().endswith(".txt"):
-        return f"{file_name[0:3] + '_311' + file_name[3:-4]}_seg.tsv"
-    raise ValueError(f"Input file must end with .txt: {file_name}")
+    match = DOC_VOLUME_PATTERN.match(file_name)
+    if not match or not file_name.lower().endswith(".txt"):
+        raise ValueError(
+            "Input file must match HVH_311_<volume>_raw.txt "
+            f"(legacy HVH_<volume>_raw.txt or *_clean.txt are also accepted): {file_name}"
+        )
+    return f"HVH_311_{match.group('volume')}_seg.tsv"
 
 
 def normalize_text(text: str) -> str:
@@ -394,7 +397,6 @@ def process_one_file(args: argparse.Namespace, service: Any, work_dir: Path) -> 
     if existing_output and not args.force:
         print(f"[SKIP] {output_name} already exists on Drive. Use --force to regenerate.")
         return 0
-    doc_id = output_name[:-8] # Remove the _seg.tsv suffix
     local_input = work_dir / args.file_name
     local_output = work_dir / output_name
     download_drive_file(service, source_file["id"], local_input)

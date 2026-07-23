@@ -165,7 +165,7 @@ lại toàn bộ ảnh nguồn.
 Mỗi trang được upload ngay sau khi OCR xong: raw JSON, ảnh kết quả và text trang.
 Pipeline không chờ hoàn tất cả sách mới upload. Nếu timeout hoặc runtime dừng, chạy
 lại cùng cell; `--resume-from-drive` sẽ bỏ qua OCR cho các trang đã có raw JSON.
-`ocr_summary.json` và file `HVH_<số sách>_raw.txt` được tạo/upload khi hoàn tất sách.
+`ocr_summary.json` và file `HVH_311_<số sách>_raw.txt` được tạo/upload khi hoàn tất sách.
 
 ## Giữ dữ liệu local
 
@@ -204,15 +204,15 @@ python scripts/ocr_v2/run_ocr_pipeline.py \
 Số đầu tiên trong tên folder sách được dùng làm số sách. Ví dụ `01_clean` tạo:
 
 ```text
-HVH_001/
+HVH_311_001/
 ├── raw/
-│   ├── HVH_001_001/
-│   └── HVH_001_002/
+│   ├── HVH_311_001_001/
+│   └── HVH_311_001_002/
 ├── texts/
-│   ├── HVH_001_001.txt
-│   └── HVH_001_002.txt
+│   ├── HVH_311_001_001.txt
+│   └── HVH_311_001_002.txt
 ├── ocr_summary.json
-└── HVH_001_raw.txt
+└── HVH_311_001_raw.txt
 ```
 
 Ảnh được sắp theo tên rồi đánh số trang từ `001`. Folder và file đã tồn tại trên
