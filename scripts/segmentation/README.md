@@ -4,6 +4,9 @@ Pipeline này tải một file OCR text từ Google Drive, tách câu theo luậ
 rồi upload kết quả lên Google Drive. Cách xác thực, download/upload, retry và
 workspace tạm được viết cùng phong cách với `scripts/ocr_v2/run_ocr_pipeline.py`.
 
+Đây là pipeline tách câu theo quy tắc. Nó không thực hiện hiệu đính bằng
+`Qwen/Qwen3.6-27B` và không tạo sản phẩm `_seg.txt` của pipeline Qwen.
+
 Script chính:
 
 ```text
@@ -51,8 +54,8 @@ Output folder nhận TSV:
 
 ```text
 segmentation/
-├── HVH_311_016_seg.tsv
-├── HVH_311_019_seg.tsv
+├── HVH_311_16_seg.tsv
+├── HVH_311_19_seg.tsv
 ```
 
 ## Quy ước tên file
@@ -61,19 +64,23 @@ Input chuẩn là file OCR raw theo dạng `HVH_311_<mã tập>_raw.txt`. Script
 legacy input `HVH_<mã tập>_raw.txt` hoặc `*_clean.txt`, nhưng output luôn theo
 chuẩn `HVH_311_<mã tập>_seg.tsv`.
 
+Mã tập được chuẩn hóa thành 2 chữ số khi tạo output. Các số 0 thừa bị loại bỏ,
+nhưng mã một chữ số được thêm một số 0 ở đầu.
+
 Ví dụ:
 
 ```text
-HVH_311_011_raw.txt   -> HVH_311_011_seg.tsv
-HVH_011_raw.txt       -> HVH_311_011_seg.tsv
-HVH_011_clean.txt     -> HVH_311_011_seg.tsv
+HVH_311_011_raw.txt   -> HVH_311_11_seg.tsv
+HVH_011_raw.txt       -> HVH_311_11_seg.tsv
+HVH_011_clean.txt     -> HVH_311_11_seg.tsv
+HVH_1_raw.txt         -> HVH_311_01_seg.tsv
 ```
 
 Sentence ID của text phẳng dùng prefix của file output, sau khi bỏ `_seg.tsv`:
 
 ```text
-HVH_311_011_000001
-HVH_311_011_000002
+HVH_311_11_000001
+HVH_311_11_000002
 ```
 
 Nếu input có page marker dạng `<page id="...">...</page>`, sentence ID dùng page
@@ -184,8 +191,8 @@ Ví dụ text phẳng:
 
 ```text
 sentence_id	sentence
-HVH_311_011_000001	春正月帝幸布海口。
-HVH_311_011_000002	詔群臣議事。
+HVH_311_11_000001	春正月帝幸布海口。
+HVH_311_11_000002	詔群臣議事。
 ```
 
 Ví dụ có page marker:
@@ -201,6 +208,7 @@ HVH_001_000002	詔群臣議事。
 - `--doc-id` có trong CLI để override prefix sentence ID; mặc định prefix được suy ra từ tên file input theo chuẩn `HVH_311_<mã tập>`.
 - Nếu output đã tồn tại trên Drive output folder, script sẽ skip trước khi download input, trừ khi dùng `--force`.
 - Script yêu cầu `GOOGLE_DRIVE_SEGMENTATION_INPUT_FOLDER_ID` và `GOOGLE_DRIVE_SEGMENTATION_OUTPUT_FOLDER_ID`, hoặc truyền trực tiếp bằng CLI.
+- Tệp TSV của script này là đầu ra kỹ thuật trung gian; sản phẩm cuối cùng của đồ án dùng định dạng `HVH_311_<mã tập>_seg.txt` từ pipeline Qwen riêng.
 
 ## Đổi tên output cũ
 

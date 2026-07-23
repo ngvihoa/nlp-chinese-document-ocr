@@ -5,6 +5,9 @@ Drive. Mỗi folder con trực tiếp của folder nguồn được xem là mộ
 Pipeline xử lý tuần tự từng sách và dọn dữ liệu tạm trước khi chuyển sang sách kế
 tiếp, nên không tải toàn bộ kho ảnh cùng lúc.
 
+Pipeline này chỉ tạo kết quả OCR thô. Bước hiệu đính và tách câu bằng
+`Qwen/Qwen3.6-27B` thuộc giai đoạn xử lý sau OCR và không nằm trong script này.
+
 ## Cài đặt
 
 ```bash
@@ -166,6 +169,8 @@ Mỗi trang được upload ngay sau khi OCR xong: raw JSON, ảnh kết quả v
 Pipeline không chờ hoàn tất cả sách mới upload. Nếu timeout hoặc runtime dừng, chạy
 lại cùng cell; `--resume-from-drive` sẽ bỏ qua OCR cho các trang đã có raw JSON.
 `ocr_summary.json` và file `HVH_311_<số sách>_raw.txt` được tạo/upload khi hoàn tất sách.
+Số đầu tiên trong tên folder được chuẩn hóa thành mã tập gồm 2 chữ số, ví dụ
+`1_clean` tạo prefix `HVH_311_01`, còn `016_clean` tạo prefix `HVH_311_16`.
 
 ## Giữ dữ liệu local
 
@@ -204,15 +209,15 @@ python scripts/ocr_v2/run_ocr_pipeline.py \
 Số đầu tiên trong tên folder sách được dùng làm số sách. Ví dụ `01_clean` tạo:
 
 ```text
-HVH_311_001/
+HVH_311_01/
 ├── raw/
-│   ├── HVH_311_001_001/
-│   └── HVH_311_001_002/
+│   ├── HVH_311_01_001/
+│   └── HVH_311_01_002/
 ├── texts/
-│   ├── HVH_311_001_001.txt
-│   └── HVH_311_001_002.txt
+│   ├── HVH_311_01_001.txt
+│   └── HVH_311_01_002.txt
 ├── ocr_summary.json
-└── HVH_311_001_raw.txt
+└── HVH_311_01_raw.txt
 ```
 
 Ảnh được sắp theo tên rồi đánh số trang từ `001`. Folder và file đã tồn tại trên

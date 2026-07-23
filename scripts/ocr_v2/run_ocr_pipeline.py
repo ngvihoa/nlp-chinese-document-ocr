@@ -373,7 +373,7 @@ def book_output_name(book_name: str) -> str:
     match = re.search(r"\d+", book_name)
     if not match:
         raise ValueError(f"Book folder name does not contain a number: {book_name}")
-    return f"HVH_311_{int(match.group())}"
+    return f"HVH_311_{int(match.group()):02d}"
 
 
 def normalize_page_names(input_dir: Path, book_name: str) -> tuple[Path, list[Path]]:

@@ -30,14 +30,14 @@ def target_raw_name(file_name: str) -> str | None:
     match = OCR_RAW_PATTERN.match(file_name)
     if not match:
         return None
-    return f"HVH_311_{int(match.group('volume'))}_raw.txt"
+    return f"HVH_311_{int(match.group('volume')):02d}_raw.txt"
 
 
 def target_seg_name(file_name: str) -> str | None:
     match = SEG_TSV_PATTERN.match(file_name)
     if not match:
         return None
-    return f"HVH_311_{int(match.group('volume'))}_seg.tsv"
+    return f"HVH_311_{int(match.group('volume')):02d}_seg.tsv"
 
 
 def rename_file(path: Path, target_name: str, dry_run: bool) -> Path:
@@ -101,7 +101,7 @@ def process_segment_output(directory: Path, dry_run: bool) -> None:
         match = SEG_TSV_PATTERN.match(path.name)
         if not match:
             continue
-        volume = str(int(match.group("volume")))
+        volume = f"{int(match.group('volume')):02d}"
         target_name = target_seg_name(path.name)
         target = rename_file(path, target_name, dry_run) if target_name else path
         rewrite_tsv_sentence_ids(path if dry_run else target, volume, dry_run)
