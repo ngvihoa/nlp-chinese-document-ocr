@@ -225,3 +225,6 @@ docs/
 # Ignore raw folders
 data_output/
 secrets/
+report/
+sentences-segment/
+ocr-output/

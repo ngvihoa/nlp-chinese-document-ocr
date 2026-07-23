@@ -47,7 +47,7 @@ PAGE_MARKER_PATTERN = re.compile(
     re.DOTALL | re.IGNORECASE,
 )
 DOC_VOLUME_PATTERN = re.compile(
-    r"^HVH_(?:311_)?(?P<volume>\d{3})(?:_(?:raw|clean))?(?:_seg)?\.(?:txt|tsv)$",
+    r"^HVH_(?:311_)?(?P<volume>\d+)(?:_(?:raw|clean))?(?:_seg)?\.(?:txt|tsv)$",
     re.IGNORECASE,
 )
 
@@ -228,7 +228,7 @@ def upload_file(service: Any, path: Path, parent_id: str) -> None:
 def derive_doc_id(file_name: str) -> str:
     match = DOC_VOLUME_PATTERN.match(file_name)
     if match:
-        return f"HVH_311_{match.group('volume')}"
+        return f"HVH_311_{int(match.group('volume'))}"
     raise ValueError(f"Cannot derive doc id from file name: {file_name}")
 
 
@@ -239,7 +239,7 @@ def output_file_name(file_name: str) -> str:
             "Input file must match HVH_311_<volume>_raw.txt "
             f"(legacy HVH_<volume>_raw.txt or *_clean.txt are also accepted): {file_name}"
         )
-    return f"HVH_311_{match.group('volume')}_seg.tsv"
+    return f"HVH_311_{int(match.group('volume'))}_seg.tsv"
 
 
 def normalize_text(text: str) -> str:

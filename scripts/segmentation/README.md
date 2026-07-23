@@ -208,30 +208,30 @@ Nếu đã có sẵn file local từ các lần chạy cũ, dùng utility sau đ
 `sentence_id` trong TSV:
 
 ```bash
-python scripts/segmentation/rename_existing_outputs.py \
-  --ocr-output-dir ./ocr_output \
-  --segment-dir ./sentences_segment
+python scripts/rename_existing_outputs.py \
+  --ocr-output-dir ./ocr-output \
+  --segment-dir ./sentences-segment
 ```
 
 Chạy thử trước khi ghi file:
 
 ```bash
-python scripts/segmentation/rename_existing_outputs.py \
-  --ocr-output-dir ./ocr_output \
-  --segment-dir ./sentences_segment \
+python scripts/rename_existing_outputs.py \
+  --ocr-output-dir ./ocr-output \
+  --segment-dir ./sentences-segment \
   --dry-run
 ```
 
 Utility này đổi:
 
 ```text
-ocr_output/HVH_011_raw.txt -> ocr_output/HVH_311_011_raw.txt
-sentences_segment/HVH_011_*_seg.tsv -> sentences_segment/HVH_311_011_seg.tsv
+ocr-output/HVH_311_011_raw.txt -> ocr-output/HVH_311_11_raw.txt
+sentences-segment/HVH_311_011_seg.tsv -> sentences-segment/HVH_311_11_seg.tsv
 ```
 
 Và viết lại `sentence_id` trong TSV thành:
 
 ```text
-HVH_311_011_000001
-HVH_311_019_000001
+HVH_311_11_000001
+HVH_311_19_000001
 ```

@@ -9,9 +9,9 @@ import re
 from pathlib import Path
 
 
-OCR_RAW_PATTERN = re.compile(r"^HVH_(?P<volume>\d{3})_raw\.txt$", re.IGNORECASE)
+OCR_RAW_PATTERN = re.compile(r"^HVH_(?:311_)?(?P<volume>\d+)_raw\.txt$", re.IGNORECASE)
 SEG_TSV_PATTERN = re.compile(
-    r"^HVH_(?:311_)?(?P<volume>\d{3})(?:_.*)?_seg\.tsv$",
+    r"^HVH_(?:311_)?(?P<volume>\d+)(?:_.*)?_seg\.tsv$",
     re.IGNORECASE,
 )
 
@@ -27,19 +27,17 @@ def parse_args() -> argparse.Namespace:
 
 
 def target_raw_name(file_name: str) -> str | None:
-    if file_name.lower().startswith("hvh_311_"):
-        return None
     match = OCR_RAW_PATTERN.match(file_name)
     if not match:
         return None
-    return f"HVH_311_{match.group('volume')}_raw.txt"
+    return f"HVH_311_{int(match.group('volume'))}_raw.txt"
 
 
 def target_seg_name(file_name: str) -> str | None:
     match = SEG_TSV_PATTERN.match(file_name)
     if not match:
         return None
-    return f"HVH_311_{match.group('volume')}_seg.tsv"
+    return f"HVH_311_{int(match.group('volume'))}_seg.tsv"
 
 
 def rename_file(path: Path, target_name: str, dry_run: bool) -> Path:
@@ -103,10 +101,10 @@ def process_segment_output(directory: Path, dry_run: bool) -> None:
         match = SEG_TSV_PATTERN.match(path.name)
         if not match:
             continue
-        volume = match.group("volume")
+        volume = str(int(match.group("volume")))
         target_name = target_seg_name(path.name)
         target = rename_file(path, target_name, dry_run) if target_name else path
-        rewrite_tsv_sentence_ids(target, volume, dry_run)
+        rewrite_tsv_sentence_ids(path if dry_run else target, volume, dry_run)
 
 
 def main() -> int:
