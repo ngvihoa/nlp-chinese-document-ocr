@@ -67,7 +67,7 @@ và upload kết quả vào một folder output riêng trên Google Drive:
 python scripts/segmentation/run_segmentation_pipeline.py \
   --drive-input-folder-id "YOUR_INPUT_FOLDER_ID" \
   --drive-output-folder-id "YOUR_OUTPUT_FOLDER_ID" \
-  --file-name "HVH_016_clean.txt"
+  --file-name "HVH_311_016_raw.txt"
 ```
 
 Có thể cấu hình hai folder trong `.env`:
@@ -77,6 +77,6 @@ GOOGLE_DRIVE_SEGMENTATION_INPUT_FOLDER_ID=ID_FOLDER_CHUA_OCR_TEXT
 GOOGLE_DRIVE_SEGMENTATION_OUTPUT_FOLDER_ID=ID_FOLDER_NHAN_SEGMENTATION_TSV
 ```
 
-File `HVH_016_clean.txt` được chuyển thành `HVH_016_seg.tsv`. Xem quy tắc tách
+File `HVH_311_016_raw.txt` được chuyển thành `HVH_311_016_seg.tsv`. Xem quy tắc tách
 câu, xác thực Google Drive và cách chạy trên Colab tại
 [`scripts/segmentation/README.md`](scripts/segmentation/README.md).

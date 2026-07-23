@@ -1,32 +1,36 @@
 # Sentence Segmentation Pipeline
 
-Pipeline này tải một file OCR text từ thư mục input trên Google Drive, tách câu và
-upload file TSV vào thư mục output riêng. Các bước download, upload, xác thực
-Google Drive và workspace tạm được giữ cùng phong cách với
-`scripts/ocr_v2/run_ocr_pipeline.py`.
+Pipeline này tải một file OCR text từ Google Drive, tách câu theo luật, ghi TSV,
+rồi upload kết quả lên Google Drive. Cách xác thực, download/upload, retry và
+workspace tạm được viết cùng phong cách với `scripts/ocr_v2/run_ocr_pipeline.py`.
 
-## Input và output
-
-Thư mục input trên Google Drive:
+Script chính:
 
 ```text
-ocr_text/
-├── HVH_016_clean.txt
+scripts/segmentation/run_segmentation_pipeline.py
 ```
 
-Thư mục output sau khi chạy:
+Notebook mẫu:
 
 ```text
-segmentation/
-├── HVH_016_seg.tsv
+scripts/segmentation/colab_segmentation_pipeline.ipynb
+scripts/segmentation/kaggle_segmentation_pipeline.ipynb
 ```
 
-Pipeline chỉ xử lý một file cho mỗi lần chạy. Nó chỉ tải file cần xử lý, không đồng
-bộ toàn bộ thư mục.
+## Luồng xử lý
 
-## Cấu hình
+1. Xác thực Google Drive bằng OAuth local hoặc Colab auth.
+2. Tìm đúng file OCR text trong Drive input folder theo `--file-name`.
+3. Tải duy nhất file đó về workspace tạm.
+4. Tách câu và ghi file TSV local.
+5. Upload TSV lên Drive output folder.
+6. Nếu output đã tồn tại và không có `--force`, pipeline bỏ qua file đó.
 
-Đặt `.env` tại thư mục gốc:
+Pipeline chỉ xử lý một file trong mỗi lần chạy; nó không đồng bộ toàn bộ folder.
+
+## Cấu hình Drive
+
+Đặt `.env` tại thư mục gốc nếu chạy local:
 
 ```dotenv
 GOOGLE_DRIVE_SEGMENTATION_INPUT_FOLDER_ID=ID_FOLDER_CHUA_OCR_TEXT
@@ -35,73 +39,199 @@ GOOGLE_OAUTH_CLIENT_FILE=./secrets/google-drive-oauth-client.json
 GOOGLE_OAUTH_TOKEN_FILE=./secrets/google-drive-token.json
 ```
 
+Input folder chứa OCR text:
+
+```text
+ocr_text/
+├── HVH_311_016_raw.txt
+├── HVH_311_019_raw.txt
+```
+
+Output folder nhận TSV:
+
+```text
+segmentation/
+├── HVH_311_016_seg.tsv
+├── HVH_311_019_seg.tsv
+```
+
+## Quy ước tên file
+
+Input chuẩn là file OCR raw theo dạng `HVH_311_<mã tập>_raw.txt`. Script vẫn nhận
+legacy input `HVH_<mã tập>_raw.txt` hoặc `*_clean.txt`, nhưng output luôn theo
+chuẩn `HVH_311_<mã tập>_seg.tsv`.
+
+Ví dụ:
+
+```text
+HVH_311_011_raw.txt   -> HVH_311_011_seg.tsv
+HVH_011_raw.txt       -> HVH_311_011_seg.tsv
+HVH_011_clean.txt     -> HVH_311_011_seg.tsv
+```
+
+Sentence ID của text phẳng dùng prefix của file output, sau khi bỏ `_seg.tsv`:
+
+```text
+HVH_311_011_000001
+HVH_311_011_000002
+```
+
+Nếu input có page marker dạng `<page id="...">...</page>`, sentence ID dùng page
+id trong marker:
+
+```text
+HVH_001_000001
+HVH_001_000002
+```
+
 ## Chạy local
+
+Chạy bằng folder ID trong `.env`:
 
 ```bash
 python scripts/segmentation/run_segmentation_pipeline.py \
-  --file-name "HVH_016_clean.txt"
+  --file-name "HVH_311_016_raw.txt"
 ```
 
-Chỉ định rõ các thư mục Drive nếu không dùng `.env`:
+Chỉ định Drive folder trực tiếp:
 
 ```bash
 python scripts/segmentation/run_segmentation_pipeline.py \
   --drive-input-folder-id "YOUR_INPUT_FOLDER_ID" \
   --drive-output-folder-id "YOUR_OUTPUT_FOLDER_ID" \
-  --file-name "HVH_016_clean.txt"
+  --file-name "HVH_311_016_raw.txt"
 ```
 
 Ghi đè output đã tồn tại:
 
 ```bash
 python scripts/segmentation/run_segmentation_pipeline.py \
-  --file-name "HVH_016_clean.txt" \
+  --drive-input-folder-id "YOUR_INPUT_FOLDER_ID" \
+  --drive-output-folder-id "YOUR_OUTPUT_FOLDER_ID" \
+  --file-name "HVH_311_016_raw.txt" \
   --force
 ```
 
+Giữ workspace local để debug:
+
+```bash
+python scripts/segmentation/run_segmentation_pipeline.py \
+  --file-name "HVH_311_016_raw.txt" \
+  --keep-work-dir ./data_output/segmentation-work
+```
+
 ## Chạy trên Colab
+
+Trong Colab, chạy `auth.authenticate_user()` trước, rồi dùng:
 
 ```bash
 !/content/post_processing_env/bin/python scripts/segmentation/run_segmentation_pipeline.py \
   --use-colab-auth \
   --drive-input-folder-id "{DRIVE_SEGMENTATION_INPUT_FOLDER_ID}" \
   --drive-output-folder-id "{DRIVE_SEGMENTATION_OUTPUT_FOLDER_ID}" \
-  --file-name "HVH_016_clean.txt"
+  --file-name "HVH_311_016_raw.txt"
 ```
 
-Notebook mẫu có sẵn tại `scripts/segmentation/colab_segmentation_pipeline.ipynb`.
+Notebook mẫu nằm ở:
+
+```text
+scripts/segmentation/colab_segmentation_pipeline.ipynb
+```
+
+## Chạy trên Kaggle
+
+Notebook Kaggle hiện có tại:
+
+```text
+scripts/segmentation/kaggle_segmentation_pipeline.ipynb
+```
+
+Notebook này clone branch `Nhat`, tạo virtualenv tại
+`/kaggle/working/post_processing_env`, rồi chạy cùng script segmentation với
+`--use-colab-auth`. Khi dùng Kaggle, cần đảm bảo notebook có cách xác thực Google
+phù hợp với môi trường đang chạy.
 
 ## Quy ước tách câu
 
-- Tách theo dấu câu Hán văn và dấu câu phổ biến: `。！？；：.!?;:`
-- Dấu hai chấm `：` hoặc `:` chỉ kết thúc câu khi nằm ngoài một cặp ngoặc.
-  Dấu hai chấm nằm trong các cặp như `「」`, `『』`, `（）`, `【】`, `《》`
-  không làm tách câu.
-- Không tách tại dấu `.` nằm giữa các chữ cái hoặc chữ số Latin, ví dụ mã tài
-  liệu `H.M.2205` hoặc số thập phân `3.14`.
-- Giữ dấu câu ở cuối câu.
-- Giữ dấu ngoặc đóng như `」`, `』` ở cùng câu với dấu kết thúc đứng trước nó,
-  kể cả khi OCR đặt dấu ngoặc ở đầu dòng tiếp theo.
-- Loại bỏ khoảng trắng dư thừa và khoảng trắng full-width.
-- Nếu văn bản không có dấu câu, tách theo từng dòng.
-- Gán ID cho từng câu theo định dạng bên dưới và lưu kết quả vào file `.tsv`.
+Pipeline hiện dùng rule-based segmentation, không dùng model ML.
 
-## Định dạng output
+Dấu kết thúc câu:
+
+```text
+。！？；：.!?;:
+```
+
+Luật chính:
+
+- Giữ dấu câu ở cuối câu.
+- Giữ dấu ngoặc đóng như `」`, `』`, `”`, `’`, `】`, `）`, `》`, `〕`, `〉` cùng câu với dấu kết thúc đứng trước.
+- Theo dõi các cặp ngoặc `「」`, `『』`, `“”`, `‘’`, `（）`, `()`, `【】`, `[]`, `《》`, `〈〉`, `〔〕`.
+- Không tách tại `:` hoặc `：` nếu dấu đó đang nằm bên trong một cặp ngoặc.
+- Không tách tại dấu `.` nếu nó nằm giữa chữ hoặc số ASCII, ví dụ `H.M.2205` hoặc `3.14`.
+- Chuẩn hóa BOM, full-width space, xuống dòng Windows và khoảng trắng dư thừa.
+- Nếu toàn văn bản không có dấu kết thúc câu nào, fallback sang tách từng dòng.
+- Nếu có page marker, tách câu riêng trong từng page marker.
+
+## Output TSV
+
+File output là UTF-8 TSV và luôn có header:
 
 ```text
 sentence_id<TAB>sentence
 ```
 
-Nếu input có page marker:
+Ví dụ text phẳng:
 
 ```text
-HVH_001_000001\t春正月帝幸布海口。
-HVH_001_000002\t詔群臣議事。
+sentence_id	sentence
+HVH_311_011_000001	春正月帝幸布海口。
+HVH_311_011_000002	詔群臣議事。
 ```
 
-Nếu input là một file OCR text phẳng:
+Ví dụ có page marker:
 
 ```text
-HVH_016_000001\t春正月帝幸布海口。
-HVH_016_000002\t詔群臣議事。
+sentence_id	sentence
+HVH_001_000001	春正月帝幸布海口。
+HVH_001_000002	詔群臣議事。
+```
+
+## Lưu ý hiện tại
+
+- `--doc-id` có trong CLI để override prefix sentence ID; mặc định prefix được suy ra từ tên file input theo chuẩn `HVH_311_<mã tập>`.
+- Nếu output đã tồn tại trên Drive output folder, script sẽ skip trước khi download input, trừ khi dùng `--force`.
+- Script yêu cầu `GOOGLE_DRIVE_SEGMENTATION_INPUT_FOLDER_ID` và `GOOGLE_DRIVE_SEGMENTATION_OUTPUT_FOLDER_ID`, hoặc truyền trực tiếp bằng CLI.
+
+## Đổi tên output cũ
+
+Nếu đã có sẵn file local từ các lần chạy cũ, dùng utility sau để đổi tên và sửa
+`sentence_id` trong TSV:
+
+```bash
+python scripts/segmentation/rename_existing_outputs.py \
+  --ocr-output-dir ./ocr_output \
+  --segment-dir ./sentences_segment
+```
+
+Chạy thử trước khi ghi file:
+
+```bash
+python scripts/segmentation/rename_existing_outputs.py \
+  --ocr-output-dir ./ocr_output \
+  --segment-dir ./sentences_segment \
+  --dry-run
+```
+
+Utility này đổi:
+
+```text
+ocr_output/HVH_011_raw.txt -> ocr_output/HVH_311_011_raw.txt
+sentences_segment/HVH_011_*_seg.tsv -> sentences_segment/HVH_311_011_seg.tsv
+```
+
+Và viết lại `sentence_id` trong TSV thành:
+
+```text
+HVH_311_011_000001
+HVH_311_019_000001
 ```
